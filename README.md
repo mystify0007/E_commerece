@@ -88,19 +88,35 @@ docs/     Architecture and planning documentation
 
 ### MongoDB (via Docker)
 
-A `docker-compose.yml` is provided at the repo root:
+A `docker-compose.yml` is provided at the repo root. It runs Mongo as a
+**single-node replica set**, not a plain standalone instance — checkout
+creates an order inside a MongoDB transaction (atomic stock decrement +
+order + payment together), and transactions require a replica set.
 
 ```bash
-docker compose up -d mongo   # starts MongoDB on localhost:27017, persisted in a named volume
-docker compose ps            # confirm it's running
-docker compose logs -f mongo # tail logs if something looks wrong
-docker compose down          # stop it (data persists in the volume)
+docker compose up -d          # starts mongo + a one-shot replica-set init job
+docker compose ps              # confirm "mongo" is healthy and "mongo-init" exited (0)
+docker compose logs -f mongo   # tail logs if something looks wrong
+docker compose down            # stop it (data persists in the volume)
 ```
 
-With this running, `MONGO_URI=mongodb://localhost:27017/juttax` (already the
-default in `server/.env.example`) will work as-is. No local MongoDB install
-needed. `MONGO_URI` can also point at a native `mongod` install or a free
-MongoDB Atlas cluster instead — any standard MongoDB connection string works.
+With this running, set:
+
+```
+MONGO_URI=mongodb://localhost:27017/juttax?replicaSet=rs0
+```
+
+in `server/.env`. No local MongoDB install needed. `MONGO_URI` can also
+point at a native `mongod` replica set or a free MongoDB Atlas cluster
+instead (Atlas is already a replica set by default) — any standard
+connection string with transaction support works.
+
+**If you already had the old (non-replica-set) container running:** your
+data is safe — it's the same named volume. Just pull the latest
+`docker-compose.yml`, run `docker compose up -d` again (it recreates the
+`mongo` container with the new `--replSet` flag and runs the one-shot init
+job), and update `MONGO_URI` in `server/.env` to add `?replicaSet=rs0` as
+shown above, then restart `npm run dev` in `server/`.
 
 ### Backend
 

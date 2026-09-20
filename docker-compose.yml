@@ -3,10 +3,39 @@ services:
     image: mongo:7
     container_name: juttax-mongo
     restart: unless-stopped
+    # Checkout runs order creation inside a MongoDB transaction (atomic stock
+    # decrement + order + payment), which requires a replica set — a plain
+    # standalone mongod cannot do multi-document transactions.
+    command: ["--replSet", "rs0", "--bind_ip_all"]
     ports:
       - "27017:27017"
     volumes:
       - juttax-mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # One-shot job: initializes the single-node replica set the first time,
+  # then no-ops on every later `docker compose up`. The member's own address
+  # is registered as "localhost:27017" (not the "mongo" service name) so the
+  # backend running on the host machine — not inside Docker — can resolve it.
+  mongo-init:
+    image: mongo:7
+    container_name: juttax-mongo-init
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: "no"
+    entrypoint:
+      - mongosh
+      - --host
+      - mongo:27017
+      - --eval
+      - >-
+        try { rs.status(); print("Replica set already initialized"); }
+        catch (e) { rs.initiate({ _id: "rs0", members: [{ _id: 0, host: "localhost:27017" }] }); print("Replica set initialized"); }
 
 volumes:
   juttax-mongo-data:
