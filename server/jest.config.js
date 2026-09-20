@@ -14,7 +14,6 @@ export default {
       testMatch: ["<rootDir>/__tests__/*.test.js"],
       testPathIgnorePatterns: ["<rootDir>/__tests__/http-layer.test.js"],
       setupFilesAfterEnv: ["<rootDir>/__tests__/setupDb.js"],
-      testTimeout: 30000,
     },
   ],
 };

@@ -1,6 +1,9 @@
-// These checks exercise the HTTP/middleware pipeline (validation, auth guard,
-// error handling, routing) without touching MongoDB, so they run even when no
-// database connection is available.
+// These checks exercise the HTTP/middleware pipeline (validation, routing,
+// error handling, and the parts of the auth guard that reject BEFORE any
+// database call) without touching MongoDB, so they run even when no database
+// connection is available. Anything that needs a real user record (a validly
+// signed token, role/ownership checks) lives in the db-integration suite,
+// since `authenticate` always calls User.findById once a token verifies.
 import request from "supertest";
 import app from "../app.js";
 
@@ -25,7 +28,6 @@ describe("HTTP layer (no database required)", () => {
       password: "short",
     });
     expect(res.status).toBe(422);
-    expect(res.body.error.code).toBe("VALIDATION_ERROR" in res.body.error ? res.body.error.code : res.body.error.code);
     expect(res.body.error.details.email).toBeDefined();
     expect(res.body.error.details.password).toBeDefined();
   });
@@ -52,7 +54,8 @@ describe("HTTP layer (no database required)", () => {
   });
 
   test("protected routes reject a token signed with the wrong secret", async () => {
-    // Simulates a forged token: well-formed JWT, wrong signature.
+    // Simulates a forged token: well-formed JWT, wrong signature. jwt.verify()
+    // throws before any DB call, so this stays DB-independent.
     const jwt = await import("jsonwebtoken");
     const forged = jwt.default.sign({ sub: "000000000000000000000000", role: "admin" }, "wrong-secret");
     const res = await request(app).get("/api/auth/me").set("Authorization", `Bearer ${forged}`);
@@ -61,6 +64,28 @@ describe("HTTP layer (no database required)", () => {
 
   test("change-password requires authentication before validation runs", async () => {
     const res = await request(app).patch("/api/auth/change-password").send({});
+    expect(res.status).toBe(401);
+  });
+
+  test("product listing rejects an invalid query (bad ObjectId for category) before hitting the DB", async () => {
+    const res = await request(app).get("/api/products").query({ category: "not-an-id" });
+    expect(res.status).toBe(422);
+  });
+
+  test("creating a product requires authentication", async () => {
+    const res = await request(app).post("/api/products").send({});
+    expect(res.status).toBe(401);
+  });
+
+  test("creating a category requires authentication", async () => {
+    const res = await request(app).post("/api/categories").send({ name: "Boots" });
+    expect(res.status).toBe(401);
+  });
+
+  test("verifying an artisan requires authentication", async () => {
+    const res = await request(app)
+      .patch("/api/artisans/000000000000000000000000/verify")
+      .send({ status: "approved" });
     expect(res.status).toBe(401);
   });
 });

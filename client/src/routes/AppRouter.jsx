@@ -1,12 +1,22 @@
 import { Routes, Route } from "react-router-dom";
 import { PublicLayout } from "../layouts/PublicLayout.jsx";
+import { ArtisanLayout } from "../layouts/ArtisanLayout.jsx";
 import { ProtectedRoute, RoleRoute } from "./ProtectedRoute.jsx";
 import { Home } from "../pages/public/Home.jsx";
 import { Login } from "../pages/public/Login.jsx";
 import { Register } from "../pages/public/Register.jsx";
+import { Shop } from "../pages/public/Shop.jsx";
+import { ProductDetails } from "../pages/public/ProductDetails.jsx";
+import { ArtisanMarketplace } from "../pages/public/ArtisanMarketplace.jsx";
+import { ArtisanProfile } from "../pages/public/ArtisanProfile.jsx";
 import { ComingSoon } from "../pages/public/ComingSoon.jsx";
 import { NotFound } from "../pages/public/NotFound.jsx";
 import { CustomerDashboard } from "../pages/customer/Dashboard.jsx";
+import { ArtisanDashboard } from "../pages/artisan/Dashboard.jsx";
+import { ArtisanShopProfile } from "../pages/artisan/ShopProfile.jsx";
+import { ArtisanProducts } from "../pages/artisan/Products.jsx";
+import { ArtisanAddProduct } from "../pages/artisan/AddProduct.jsx";
+import { ArtisanEditProduct } from "../pages/artisan/EditProduct.jsx";
 
 export function AppRouter() {
   return (
@@ -15,8 +25,10 @@ export function AppRouter() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/shop" element={<ComingSoon title="Shop" phase="Phase 5 — Product Marketplace" />} />
-        <Route path="/artisans" element={<ComingSoon title="Artisan Marketplace" phase="Phase 6 — Artisan Marketplace" />} />
+        <Route path="/shop" element={<Shop />} />
+        <Route path="/products/:id" element={<ProductDetails />} />
+        <Route path="/artisans" element={<ArtisanMarketplace />} />
+        <Route path="/artisans/:id" element={<ArtisanProfile />} />
         <Route path="/custom-shoes" element={<ComingSoon title="Custom Shoes" phase="Phase 8 — Customization" />} />
         <Route path="/about" element={<ComingSoon title="About JuttaX" phase="a later content phase" />} />
 
@@ -24,15 +36,23 @@ export function AppRouter() {
           <Route path="/dashboard" element={<CustomerDashboard />} />
         </Route>
 
-        <Route element={<RoleRoute roles={["artisan"]} />}>
-          <Route path="/artisan" element={<ComingSoon title="Artisan Dashboard" phase="Phase 6 — Artisan Marketplace" />} />
-        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Route>
 
-        <Route element={<RoleRoute roles={["admin"]} />}>
+      <Route element={<RoleRoute roles={["artisan"]} />}>
+        <Route element={<ArtisanLayout />}>
+          <Route path="/artisan" element={<ArtisanDashboard />} />
+          <Route path="/artisan/shop" element={<ArtisanShopProfile />} />
+          <Route path="/artisan/products" element={<ArtisanProducts />} />
+          <Route path="/artisan/products/new" element={<ArtisanAddProduct />} />
+          <Route path="/artisan/products/:id/edit" element={<ArtisanEditProduct />} />
+        </Route>
+      </Route>
+
+      <Route element={<RoleRoute roles={["admin"]} />}>
+        <Route element={<PublicLayout />}>
           <Route path="/admin" element={<ComingSoon title="Admin Dashboard" phase="Phase 12 — Admin" />} />
         </Route>
-
-        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );

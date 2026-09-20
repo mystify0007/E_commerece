@@ -6,6 +6,8 @@ process.env.JWT_SECRET = process.env.JWT_SECRET || "test-jwt-secret";
 process.env.JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "test-jwt-refresh-secret";
 process.env.CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 
+jest.setTimeout(60000); // first run downloads a real mongod binary, which can be slow
+
 let mongod;
 
 beforeAll(async () => {

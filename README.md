@@ -17,9 +17,13 @@ development roadmap, and dependency list.
 - [x] **Phase 2** — Database (all 19 Mongoose models, relationships, indexes)
 - [x] **Phase 3** — Authentication & authorization (JWT, bcrypt, roles,
       protected routes, password reset)
-- [ ] Phase 4 — Customer foundations
-- [ ] Phase 5 — Product marketplace
-- [ ] Phase 6 — Artisan marketplace
+- [x] **Phase 4** — Customer foundations (dashboard shell, profile, browsing)
+- [x] **Phase 5** — Product marketplace (categories, product CRUD with admin
+      approval, server-side search/filter/sort/pagination, product details,
+      basic same-category "similar products")
+- [x] **Phase 6 (partial)** — Artisan marketplace (public artisan listing +
+      profile, artisan shop-profile editing, admin verification endpoint).
+      Full seller analytics/dashboard polish still lands in Phase 17/18.
 - [ ] Phase 7 — Cart & orders
 - [ ] Phase 8 — Customization
 - [ ] Phase 9 — Custom production tracking
