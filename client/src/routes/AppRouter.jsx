@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { PublicLayout } from "../layouts/PublicLayout.jsx";
 import { ArtisanLayout } from "../layouts/ArtisanLayout.jsx";
+import { AdminLayout } from "../layouts/AdminLayout.jsx";
 import { ProtectedRoute, RoleRoute } from "./ProtectedRoute.jsx";
 import { Home } from "../pages/public/Home.jsx";
 import { Login } from "../pages/public/Login.jsx";
@@ -17,6 +18,11 @@ import { ArtisanShopProfile } from "../pages/artisan/ShopProfile.jsx";
 import { ArtisanProducts } from "../pages/artisan/Products.jsx";
 import { ArtisanAddProduct } from "../pages/artisan/AddProduct.jsx";
 import { ArtisanEditProduct } from "../pages/artisan/EditProduct.jsx";
+import { AdminDashboard } from "../pages/admin/Dashboard.jsx";
+import { AdminUsers } from "../pages/admin/Users.jsx";
+import { AdminArtisans } from "../pages/admin/Artisans.jsx";
+import { AdminProducts } from "../pages/admin/Products.jsx";
+import { AdminCategories } from "../pages/admin/Categories.jsx";
 
 export function AppRouter() {
   return (
@@ -50,8 +56,12 @@ export function AppRouter() {
       </Route>
 
       <Route element={<RoleRoute roles={["admin"]} />}>
-        <Route element={<PublicLayout />}>
-          <Route path="/admin" element={<ComingSoon title="Admin Dashboard" phase="Phase 12 — Admin" />} />
+        <Route element={<AdminLayout />}>
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/artisans" element={<AdminArtisans />} />
+          <Route path="/admin/products" element={<AdminProducts />} />
+          <Route path="/admin/categories" element={<AdminCategories />} />
         </Route>
       </Route>
     </Routes>

@@ -88,4 +88,9 @@ describe("HTTP layer (no database required)", () => {
       .send({ status: "approved" });
     expect(res.status).toBe(401);
   });
+
+  test("admin dashboard requires authentication", async () => {
+    const res = await request(app).get("/api/admin/dashboard");
+    expect(res.status).toBe(401);
+  });
 });

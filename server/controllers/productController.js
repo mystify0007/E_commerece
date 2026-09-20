@@ -35,7 +35,7 @@ export const deleteProduct = asyncHandler(async (req, res) => {
 });
 
 export const moderateProduct = asyncHandler(async (req, res) => {
-  const product = await productService.moderateProduct(req.params.id, req.body);
+  const product = await productService.moderateProduct(req.params.id, req.body, req.user);
   sendSuccess(res, 200, product, `Product ${req.body.action}d`);
 });
 

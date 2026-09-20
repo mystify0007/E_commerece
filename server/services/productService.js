@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { parsePagination } from "../utils/paginate.js";
 import { getArtisanProfileByUserId, assertArtisanCanSell } from "./artisanService.js";
 import { createNotification } from "./notificationService.js";
+import { logAdminAction } from "./auditService.js";
 
 const SORTS = {
   newest: { createdAt: -1 },
@@ -129,13 +130,23 @@ export async function archiveMyProduct(userId, productId) {
   return product;
 }
 
-export async function moderateProduct(productId, { action, rejectionReason }) {
+export async function moderateProduct(productId, { action, rejectionReason }, admin) {
   const product = await Product.findById(productId).populate("artisan", "user");
   if (!product) throw ApiError.notFound("Product not found");
 
+  const before = product.status;
   product.status = action === "approve" ? "approved" : "rejected";
   product.rejectionReason = action === "reject" ? rejectionReason : undefined;
   await product.save();
+
+  await logAdminAction({
+    admin: admin._id,
+    action: "product.moderate",
+    targetType: "Product",
+    target: product._id,
+    before: { status: before },
+    after: { status: product.status, rejectionReason },
+  });
 
   await createNotification({
     user: product.artisan.user,
@@ -150,6 +161,24 @@ export async function moderateProduct(productId, { action, rejectionReason }) {
   });
 
   return product;
+}
+
+export async function listProductsForAdmin({ status, page, limit }) {
+  const { skip, limit: pageLimit, page: p } = parsePagination({ page, limit });
+  const query = {};
+  if (status && status !== "all") query.status = status;
+
+  const [items, total] = await Promise.all([
+    Product.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(pageLimit)
+      .populate("artisan", "shopName")
+      .populate("category", "name"),
+    Product.countDocuments(query),
+  ]);
+
+  return { items, total, page: p, limit: pageLimit };
 }
 
 // Simple content-based similarity for now (same category, nearby price band);
