@@ -18,7 +18,7 @@ export function Home() {
             <Link to="/shop">
               <Button>Explore Footwear</Button>
             </Link>
-            <Link to="/custom-shoes">
+            <Link to="/custom-requests/new">
               <Button variant="outline">Customize Your Shoes</Button>
             </Link>
           </div>

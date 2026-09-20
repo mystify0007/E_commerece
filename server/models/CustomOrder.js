@@ -17,7 +17,10 @@ export const PRODUCTION_STAGES = [
 
 // Stages a production order may move to from a given stage (linear + terminal exits).
 export const STAGE_TRANSITIONS = {
-  request_submitted: ["design_review", "rejected", "cancelled"],
+  // An artisan may submit a proposal straight away (skipping the optional
+  // "design_review" holding stage), or move into design_review first if
+  // they want to signal they're still evaluating the request.
+  request_submitted: ["design_review", "proposal_sent", "rejected", "cancelled"],
   design_review: ["proposal_sent", "rejected", "cancelled"],
   proposal_sent: ["customer_approved", "rejected", "cancelled"],
   customer_approved: ["material_preparation", "cancelled"],

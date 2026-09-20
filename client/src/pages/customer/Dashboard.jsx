@@ -2,12 +2,17 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { getMyOrdersRequest } from "../../services/orderService.js";
+import { getMyCustomOrdersRequest } from "../../services/customOrderService.js";
 
 export function CustomerDashboard() {
   const { user } = useAuth();
   const { data: orders } = useQuery({
     queryKey: ["my-orders", "dashboard"],
     queryFn: () => getMyOrdersRequest({ page: 1, limit: 1 }),
+  });
+  const { data: customOrders } = useQuery({
+    queryKey: ["my-custom-orders", "dashboard"],
+    queryFn: () => getMyCustomOrdersRequest({ page: 1, limit: 1 }),
   });
 
   return (
@@ -25,11 +30,10 @@ export function CustomerDashboard() {
           <p className="mt-2 text-2xl font-semibold text-stone-900">—</p>
           <p className="mt-1 text-xs text-stone-400">Coming in a later phase</p>
         </div>
-        <div className="rounded-xl border border-stone-200 p-6 opacity-60">
+        <Link to="/custom-requests" className="rounded-xl border border-stone-200 p-6 hover:border-brand-300">
           <p className="text-sm font-medium text-stone-500">Custom Requests</p>
-          <p className="mt-2 text-2xl font-semibold text-stone-900">—</p>
-          <p className="mt-1 text-xs text-stone-400">Coming in Phase 9</p>
-        </div>
+          <p className="mt-2 text-2xl font-semibold text-stone-900">{customOrders?.total ?? "—"}</p>
+        </Link>
       </div>
     </div>
   );

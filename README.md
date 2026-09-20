@@ -38,7 +38,10 @@ development roadmap, and dependency list.
       (style/color/material/sole/personalization) per product, live-priced
       customizer UI, server-authoritative pricing shared by cart, checkout,
       and a public price-preview endpoint
-- [ ] Phase 9 — Custom production tracking
+- [x] **Phase 9** — Custom shoe requests: request -> artisan proposal ->
+      accept/reject/request-changes -> 10-stage production timeline, with
+      the request locked to whichever verified artisan responds first and
+      stage transitions enforced by a guard (no skipping ahead)
 - [ ] Phase 10 — AI (recommendations, sizing, listing assistant)
 - [ ] Phase 11 — Reviews & notifications
 - [ ] Phase 13 — Testing & deployment
