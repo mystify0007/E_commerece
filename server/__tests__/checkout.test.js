@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import request from "supertest";
 import app from "../app.js";
 
@@ -105,6 +106,49 @@ describe("Cart & checkout", () => {
     const payment = await Payment.findOne({ order: orderRes.body.data._id });
     expect(payment.provider).toBe("cod");
     expect(payment.amount).toBe(7150);
+  });
+
+  test("checkout with eSewa returns a signed redirect form instead of settling immediately", async () => {
+    const { env } = await import("../config/env.js");
+    const { productId } = await setupApprovedProduct({ price: 3500, stock: 5 });
+    const customer = await registerAndLogin({ email: "esewacustomer@example.com" });
+
+    await request(app)
+      .post("/api/cart/items")
+      .set("Authorization", `Bearer ${customer.accessToken}`)
+      .send({ product: productId, quantity: 1, size: 41 });
+
+    const orderRes = await request(app)
+      .post("/api/orders")
+      .set("Authorization", `Bearer ${customer.accessToken}`)
+      .send({ shippingAddress: address, paymentProvider: "esewa" });
+
+    expect(orderRes.status).toBe(201);
+    const { paymentRedirect } = orderRes.body.data;
+    expect(paymentRedirect.method).toBe("POST");
+    expect(paymentRedirect.url).toBe(env.esewa.formUrl);
+
+    const fields = paymentRedirect.fields;
+    expect(fields.product_code).toBe(env.esewa.productCode);
+    expect(fields.transaction_uuid).toBe(orderRes.body.data._id);
+    expect(fields.total_amount).toBe(orderRes.body.data.total);
+    expect(fields.amount + fields.tax_amount + fields.product_service_charge + fields.product_delivery_charge).toBe(
+      fields.total_amount
+    );
+
+    const expectedMessage = fields.signed_field_names
+      .split(",")
+      .map((key) => `${key}=${fields[key]}`)
+      .join(",");
+    const expectedSignature = crypto.createHmac("sha256", env.esewa.secretKey).update(expectedMessage).digest("base64");
+    expect(fields.signature).toBe(expectedSignature);
+
+    // eSewa checkout doesn't settle inline: the payment stays "initiated"
+    // until the frontend callback re-verifies it against eSewa's API.
+    const { Payment } = await import("../models/Payment.js");
+    const payment = await Payment.findOne({ order: orderRes.body.data._id });
+    expect(payment.status).toBe("initiated");
+    expect(payment.providerTransactionId).toBe(orderRes.body.data._id);
   });
 
   test("checkout rejects when requested quantity exceeds current stock (race-safe)", async () => {

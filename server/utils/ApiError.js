@@ -29,4 +29,8 @@ export class ApiError extends Error {
   static unprocessable(message, details) {
     return new ApiError(422, message, "UNPROCESSABLE_ENTITY", details);
   }
+
+  static badGateway(message = "Upstream service error") {
+    return new ApiError(502, message, "BAD_GATEWAY");
+  }
 }

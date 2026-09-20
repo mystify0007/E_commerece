@@ -38,6 +38,15 @@ export const env = {
     apiKey: process.env.PAYMENT_API_KEY,
     secret: process.env.PAYMENT_SECRET,
   },
+  // eSewa ePay v2 defaults to eSewa's own publicly documented sandbox
+  // merchant (EPAYTEST) so the integration works out of the box in
+  // development; override with real merchant credentials to go live.
+  esewa: {
+    productCode: process.env.ESEWA_PRODUCT_CODE || "EPAYTEST",
+    secretKey: process.env.ESEWA_SECRET_KEY || "8gBm/:&EnhH.1/q",
+    formUrl: process.env.ESEWA_FORM_URL || "https://rc-epay.esewa.com.np/api/epay/main/v2/form",
+    statusUrl: process.env.ESEWA_STATUS_URL || "https://rc.esewa.com.np/api/epay/transaction/status/",
+  },
   smtp: {
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT) || 587,

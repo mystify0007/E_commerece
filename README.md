@@ -25,18 +25,21 @@ development roadmap, and dependency list.
       with reviews, shop-profile editing, admin verification workflow)
 - [x] **Phase 7** — Cart & checkout: server-priced cart, transactional order
       creation (Mongo session + `withTransaction`) with atomic stock
-      decrement, pluggable payment adapter (working `cod`/`mock` providers;
-      `esewa`/`khalti` scaffolded but honestly disabled until real sandbox
-      credentials + verified API docs are added), order tracking for
-      customer/artisan/admin with per-artisan data isolation on shared orders
+      decrement, pluggable payment adapter (working `cod`/`mock`/`esewa`
+      providers — eSewa uses the real ePay v2 sandbox flow, signed form
+      redirect + server-side status verification; `khalti` still fails
+      closed until real sandbox credentials + verified API docs are added),
+      order tracking for customer/artisan/admin with per-artisan data
+      isolation on shared orders
 - [x] **Phase 8** — Shoe customizer: artisan-managed customization options
       (style/color/material/sole/personalization) per product, live-priced
       customizer UI, server-authoritative pricing shared by cart, checkout,
       and a public price-preview endpoint
-- [x] **Phase 9** — Custom shoe requests: request → artisan proposal →
-      accept/reject/request-changes → 10-stage production timeline, with the
-      request locked to whichever verified artisan responds first and stage
-      transitions enforced by a guard (no skipping ahead)
+- ~~Phase 9 — Custom shoe requests~~ (removed): request → artisan proposal
+      → accept/reject/request-changes → 10-stage production timeline was
+      built, then removed at the project owner's request in favor of a
+      simpler curated-catalog marketplace model (craftsmen list ready-made
+      products directly; see "Known, intentional gaps" below).
 - [x] **Phase 10** — AI: content-based "Recommended For You" (built from real
       purchase history, category/material/color/price/artisan affinity, with
       a popular-products fallback for new customers), wishlist-based
@@ -61,12 +64,20 @@ development roadmap, and dependency list.
 
 ### Known, intentional gaps
 
-- **eSewa / Khalti** are wired into the same `PaymentProvider` interface as
-  the working `cod`/`mock` providers, but fail closed with a clear "not
-  configured" error rather than shipping guessed request/response field
-  names as if they were a verified integration. Add real sandbox
-  credentials and finish `services/paymentService/providers/{esewa,khalti}Provider.js`
-  against each gateway's current docs to go live.
+- **eSewa** is a real, working integration against eSewa's ePay v2 sandbox
+  (`rc-epay.esewa.com.np`), using eSewa's own publicly documented test
+  merchant (`EPAYTEST`) by default — checkout builds a signed form POST,
+  the browser completes payment on eSewa's sandbox site, and the frontend
+  callback re-verifies the result against eSewa's transaction-status API
+  before the order's payment is marked paid (the redirect itself is never
+  trusted). Set `ESEWA_PRODUCT_CODE`/`ESEWA_SECRET_KEY` to real merchant
+  credentials to go live.
+- **Khalti** is wired into the same `PaymentProvider` interface as the
+  working `cod`/`mock`/`esewa` providers, but fails closed with a clear
+  "not configured" error rather than shipping guessed request/response
+  field names as if they were a verified integration. Add real sandbox
+  credentials and finish `services/paymentService/providers/khaltiProvider.js`
+  against Khalti's current docs to go live.
 - **Admin review moderation** has a working API
   (`PATCH /api/reviews/:id/moderate`) but no dedicated admin UI page yet —
   everything else in the admin panel (users, artisans, products, categories)

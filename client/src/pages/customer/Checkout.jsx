@@ -14,9 +14,27 @@ const SHIPPING_FEE = 150;
 const PROVIDERS = [
   { value: "cod", label: "Cash on Delivery", available: true },
   { value: "mock", label: "Test Online Payment (sandbox)", available: true },
-  { value: "esewa", label: "eSewa", available: false },
+  { value: "esewa", label: "eSewa (sandbox)", available: true },
   { value: "khalti", label: "Khalti", available: false },
 ];
+
+// eSewa's checkout is a signed form POST, not a JSON redirect — build a
+// hidden form with the server-provided fields and submit it so the browser
+// navigates to eSewa's sandbox payment page.
+function redirectToPaymentGateway({ method, url, fields }) {
+  const form = document.createElement("form");
+  form.method = method;
+  form.action = url;
+  Object.entries(fields).forEach(([name, value]) => {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = name;
+    input.value = value;
+    form.appendChild(input);
+  });
+  document.body.appendChild(form);
+  form.submit();
+}
 
 export function Checkout() {
   const navigate = useNavigate();
@@ -33,6 +51,13 @@ export function Checkout() {
     try {
       const order = await createOrderRequest(values);
       await queryClient.invalidateQueries({ queryKey: ["cart"] });
+
+      if (order.paymentRedirect) {
+        toast.success("Redirecting you to eSewa…");
+        redirectToPaymentGateway(order.paymentRedirect);
+        return;
+      }
+
       toast.success("Order placed!");
       navigate(`/orders/${order._id}`);
     } catch (err) {

@@ -19,6 +19,7 @@ import { Wishlist } from "../pages/customer/Wishlist.jsx";
 import { Checkout } from "../pages/customer/Checkout.jsx";
 import { CustomerOrders } from "../pages/customer/Orders.jsx";
 import { CustomerOrderDetails } from "../pages/customer/OrderDetails.jsx";
+import { PaymentCallback } from "../pages/customer/PaymentCallback.jsx";
 import { ArtisanDashboard } from "../pages/artisan/Dashboard.jsx";
 import { ArtisanShopProfile } from "../pages/artisan/ShopProfile.jsx";
 import { ArtisanProducts } from "../pages/artisan/Products.jsx";
@@ -53,6 +54,7 @@ export function AppRouter() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/orders" element={<CustomerOrders />} />
           <Route path="/orders/:id" element={<CustomerOrderDetails />} />
+          <Route path="/payment/esewa/callback" element={<PaymentCallback />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

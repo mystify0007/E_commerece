@@ -21,6 +21,7 @@ export async function createOrderFromCart(userId, { shippingAddress, paymentProv
   const session = await mongoose.startSession();
   try {
     let order;
+    let paymentRedirect = null;
 
     await session.withTransaction(async () => {
       let subtotal = 0;
@@ -82,7 +83,8 @@ export async function createOrderFromCart(userId, { shippingAddress, paymentProv
       createdOrder.items = orderItemDocs.map((i) => i._id);
       await createdOrder.save({ session });
 
-      await initiatePayment(createdOrder, paymentProvider, session);
+      const paymentResult = await initiatePayment(createdOrder, paymentProvider, session);
+      paymentRedirect = paymentResult.redirect;
 
       cart.items = [];
       await cart.save({ session });
@@ -107,7 +109,8 @@ export async function createOrderFromCart(userId, { shippingAddress, paymentProv
       })
     );
 
-    return getOrderById(order._id, { _id: userId, role: "customer" });
+    const result = await getOrderById(order._id, { _id: userId, role: "customer" });
+    return { ...result, paymentRedirect };
   } finally {
     await session.endSession();
   }

@@ -19,7 +19,9 @@ export function getProvider(name) {
 }
 
 // Creates the Payment record for an order using the chosen provider. Runs
-// inside the caller's transaction session when one is provided.
+// inside the caller's transaction session when one is provided. Returns the
+// payment record plus any redirect instructions the frontend must follow
+// (e.g. eSewa's signed form POST) — null for providers that settle inline.
 export async function initiatePayment(order, providerName, session) {
   const provider = getProvider(providerName);
   const result = await provider.initiate(order);
@@ -38,12 +40,12 @@ export async function initiatePayment(order, providerName, session) {
     { session }
   );
 
-  return payment;
+  return { payment, redirect: result.redirect || null };
 }
 
 export async function verifyPayment(payment) {
   const provider = getProvider(payment.provider);
-  const result = await provider.verify(payment.providerTransactionId);
+  const result = await provider.verify(payment);
   payment.status = result.status;
   if (result.status === "success" && !payment.paidAt) payment.paidAt = new Date();
   await payment.save();
