@@ -27,9 +27,6 @@ export function ArtisanLayout() {
           <NavLink to="/artisan/orders" className={linkClass}>
             Orders
           </NavLink>
-          <NavLink to="/artisan/custom-requests" className={linkClass}>
-            Custom Requests
-          </NavLink>
         </aside>
         <main className="flex-1">
           <Outlet />

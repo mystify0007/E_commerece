@@ -104,11 +104,6 @@ describe("HTTP layer (no database required)", () => {
     expect(res.status).toBe(401);
   });
 
-  test("submitting a custom shoe request requires authentication", async () => {
-    const res = await request(app).post("/api/custom-orders").send({});
-    expect(res.status).toBe(401);
-  });
-
   test("size recommendation is a pure calculation and needs no auth or DB", async () => {
     const res = await request(app).post("/api/sizing/recommend").send({ footLengthCm: 26, preferredFit: "regular" });
     expect(res.status).toBe(200);

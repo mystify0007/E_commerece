@@ -22,6 +22,7 @@ export function Shop() {
     category: searchParams.get("category") || undefined,
     minPrice: searchParams.get("minPrice") || undefined,
     maxPrice: searchParams.get("maxPrice") || undefined,
+    customizable: searchParams.get("customizable") === "true" ? true : undefined,
     sort: searchParams.get("sort") || "newest",
     page: Number(searchParams.get("page")) || 1,
     limit: 12,
@@ -106,6 +107,15 @@ export function Shop() {
               />
             </div>
           </div>
+
+          <label className="flex items-center gap-2 text-sm text-stone-700">
+            <input
+              type="checkbox"
+              checked={Boolean(filters.customizable)}
+              onChange={(e) => updateFilter("customizable", e.target.checked ? "true" : "")}
+            />
+            Customizable only
+          </label>
         </aside>
 
         <div className="lg:col-span-3">

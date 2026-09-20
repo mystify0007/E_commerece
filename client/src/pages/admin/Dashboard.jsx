@@ -4,9 +4,9 @@ import { Spinner } from "../../components/common/Spinner.jsx";
 
 const TILES = [
   { key: "totalCustomers", label: "Total Customers" },
-  { key: "totalArtisans", label: "Total Artisans" },
+  { key: "totalArtisans", label: "Total Craftsmen" },
   { key: "pendingArtisans", label: "Pending Verifications" },
-  { key: "approvedArtisans", label: "Verified Artisans" },
+  { key: "approvedArtisans", label: "Verified Craftsmen" },
   { key: "totalProducts", label: "Total Products" },
   { key: "pendingProducts", label: "Pending Products" },
   { key: "approvedProducts", label: "Live Products" },

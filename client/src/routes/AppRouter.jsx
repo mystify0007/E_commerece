@@ -19,9 +19,6 @@ import { Wishlist } from "../pages/customer/Wishlist.jsx";
 import { Checkout } from "../pages/customer/Checkout.jsx";
 import { CustomerOrders } from "../pages/customer/Orders.jsx";
 import { CustomerOrderDetails } from "../pages/customer/OrderDetails.jsx";
-import { NewCustomRequest } from "../pages/customer/NewCustomRequest.jsx";
-import { CustomRequests } from "../pages/customer/CustomRequests.jsx";
-import { CustomerCustomOrderDetails } from "../pages/customer/CustomOrderDetails.jsx";
 import { ArtisanDashboard } from "../pages/artisan/Dashboard.jsx";
 import { ArtisanShopProfile } from "../pages/artisan/ShopProfile.jsx";
 import { ArtisanProducts } from "../pages/artisan/Products.jsx";
@@ -29,8 +26,6 @@ import { ArtisanAddProduct } from "../pages/artisan/AddProduct.jsx";
 import { ArtisanEditProduct } from "../pages/artisan/EditProduct.jsx";
 import { ArtisanOrders } from "../pages/artisan/Orders.jsx";
 import { ArtisanProductCustomizations } from "../pages/artisan/ProductCustomizations.jsx";
-import { ArtisanCustomRequests } from "../pages/artisan/CustomRequests.jsx";
-import { ArtisanCustomOrderDetails } from "../pages/artisan/CustomOrderDetails.jsx";
 import { AdminDashboard } from "../pages/admin/Dashboard.jsx";
 import { AdminUsers } from "../pages/admin/Users.jsx";
 import { AdminArtisans } from "../pages/admin/Artisans.jsx";
@@ -58,9 +53,6 @@ export function AppRouter() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/orders" element={<CustomerOrders />} />
           <Route path="/orders/:id" element={<CustomerOrderDetails />} />
-          <Route path="/custom-requests" element={<CustomRequests />} />
-          <Route path="/custom-requests/new" element={<NewCustomRequest />} />
-          <Route path="/custom-requests/:id" element={<CustomerCustomOrderDetails />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />
@@ -75,8 +67,6 @@ export function AppRouter() {
           <Route path="/artisan/products/:id/edit" element={<ArtisanEditProduct />} />
           <Route path="/artisan/orders" element={<ArtisanOrders />} />
           <Route path="/artisan/products/:id/customizations" element={<ArtisanProductCustomizations />} />
-          <Route path="/artisan/custom-requests" element={<ArtisanCustomRequests />} />
-          <Route path="/artisan/custom-requests/:id" element={<ArtisanCustomOrderDetails />} />
         </Route>
       </Route>
 

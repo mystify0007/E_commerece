@@ -19,7 +19,7 @@ export function AdminLayout() {
             Users
           </NavLink>
           <NavLink to="/admin/artisans" className={linkClass}>
-            Artisan Verification
+            Craftsman Verification
           </NavLink>
           <NavLink to="/admin/products" className={linkClass}>
             Product Moderation

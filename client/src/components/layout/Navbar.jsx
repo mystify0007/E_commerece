@@ -25,8 +25,7 @@ export function Navbar() {
 
         <nav className="hidden items-center gap-8 md:flex">
           <NavLink to="/shop" className={navLink}>Shop</NavLink>
-          <NavLink to="/artisans" className={navLink}>Artisans</NavLink>
-          <NavLink to="/custom-requests/new" className={navLink}>Custom Shoes</NavLink>
+          <NavLink to="/artisans" className={navLink}>Craftsmen</NavLink>
           <NavLink to="/about" className={navLink}>About</NavLink>
         </nav>
 

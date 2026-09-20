@@ -71,7 +71,7 @@ export function Register() {
               }`}
             >
               <input type="radio" value="artisan" className="sr-only" {...register("role")} />
-              Artisan
+              Craftsman
             </label>
           </div>
         </div>

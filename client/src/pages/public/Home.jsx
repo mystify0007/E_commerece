@@ -22,7 +22,7 @@ export function Home() {
       <section className="border-b border-stone-200 bg-gradient-to-b from-brand-50 to-white">
         <div className="mx-auto max-w-7xl px-4 py-24 text-center sm:px-6 lg:px-8">
           <h1 className="mx-auto max-w-3xl text-4xl font-semibold tracking-tight text-stone-900 sm:text-5xl">
-            Handcrafted for You. Made by Local Artisans.
+            Handcrafted for You. Made by Local Craftsmen.
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-lg text-stone-600">
             Discover unique handmade footwear, customize your own design, and shop directly from local makers.
@@ -31,7 +31,7 @@ export function Home() {
             <Link to="/shop">
               <Button>Explore Footwear</Button>
             </Link>
-            <Link to="/custom-requests/new">
+            <Link to="/shop?customizable=true">
               <Button variant="outline">Customize Your Shoes</Button>
             </Link>
           </div>
@@ -82,7 +82,7 @@ export function Home() {
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <h2 className="text-xl font-semibold text-stone-900">Local Craft, Delivered</h2>
           <p className="mt-3 max-w-2xl text-stone-600">
-            JuttaX connects you directly with the artisans who make your footwear by hand — no factories, no
+            JuttaX connects you directly with the craftsmen who make your footwear by hand — no factories, no
             middlemen. Every pair carries a story, and every purchase supports a local maker.
           </p>
         </div>

@@ -38,7 +38,6 @@ const orderSchema = new Schema(
       enum: Object.keys(ORDER_TRANSITIONS),
       default: "pending",
     },
-    sourceCustomOrder: { type: Schema.Types.ObjectId, ref: "CustomOrder", default: null },
   },
   { timestamps: true }
 );

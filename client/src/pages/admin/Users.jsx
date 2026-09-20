@@ -40,7 +40,7 @@ export function AdminUsers() {
         <select value={role} onChange={(e) => setRole(e.target.value)} className="rounded-lg border border-stone-300 px-3 py-2 text-sm">
           <option value="">All roles</option>
           <option value="customer">Customer</option>
-          <option value="artisan">Artisan</option>
+          <option value="artisan">Craftsman</option>
           <option value="admin">Admin</option>
         </select>
       </div>

@@ -113,7 +113,7 @@ export function Customizer() {
           </div>
 
           {Object.keys(grouped).length === 0 && (
-            <EmptyState title="No customization options yet" description="The artisan hasn't added any options for this product." />
+            <EmptyState title="No customization options yet" description="The craftsman hasn't added any options for this product." />
           )}
 
           {Object.entries(grouped).map(([type, opts]) => (
