@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { getOrderRequest, updateOrderStatusRequest } from "../../services/orderService.js";
+import { ReviewForm } from "../../components/review/ReviewForm.jsx";
 import { Spinner } from "../../components/common/Spinner.jsx";
 import { ErrorState } from "../../components/common/EmptyState.jsx";
 import { Button } from "../../components/common/Button.jsx";
@@ -12,6 +14,8 @@ const STAGES = ["pending", "confirmed", "processing", "shipped", "delivered"];
 export function CustomerOrderDetails() {
   const { id } = useParams();
   const queryClient = useQueryClient();
+  const [reviewingItem, setReviewingItem] = useState(null);
+  const [reviewedItems, setReviewedItems] = useState(new Set());
   const { data: order, isLoading, isError } = useQuery({
     queryKey: ["order", id],
     queryFn: () => getOrderRequest(id),
@@ -61,15 +65,38 @@ export function CustomerOrderDetails() {
         <h2 className="font-medium text-stone-900">Items</h2>
         <div className="mt-3 divide-y divide-stone-200 rounded-xl border border-stone-200">
           {order.items.map((item) => (
-            <div key={item._id} className="flex items-center gap-4 p-4">
-              <img src={item.product?.images?.[0]} alt="" className="h-14 w-14 rounded-lg object-cover" />
-              <div className="flex-1">
-                <p className="font-medium text-stone-900">{item.product?.name}</p>
-                <p className="text-sm text-stone-500">
-                  Size {item.size} × {item.quantity} · {item.artisan?.shopName}
-                </p>
+            <div key={item._id} className="p-4">
+              <div className="flex items-center gap-4">
+                <img src={item.product?.images?.[0]} alt="" className="h-14 w-14 rounded-lg object-cover" />
+                <div className="flex-1">
+                  <p className="font-medium text-stone-900">{item.product?.name}</p>
+                  <p className="text-sm text-stone-500">
+                    Size {item.size} × {item.quantity} · {item.artisan?.shopName}
+                  </p>
+                </div>
+                <span className="font-medium text-stone-900">{formatCurrency(item.lineTotal)}</span>
+                {order.status === "delivered" && !reviewedItems.has(item._id) && (
+                  <Button
+                    variant="outline"
+                    onClick={() => setReviewingItem(reviewingItem === item._id ? null : item._id)}
+                  >
+                    Write a Review
+                  </Button>
+                )}
               </div>
-              <span className="font-medium text-stone-900">{formatCurrency(item.lineTotal)}</span>
+              {reviewingItem === item._id && (
+                <div className="mt-3">
+                  <ReviewForm
+                    targetType="Product"
+                    target={item.product._id}
+                    order={order._id}
+                    onDone={() => {
+                      setReviewingItem(null);
+                      setReviewedItems((prev) => new Set(prev).add(item._id));
+                    }}
+                  />
+                </div>
+              )}
             </div>
           ))}
         </div>

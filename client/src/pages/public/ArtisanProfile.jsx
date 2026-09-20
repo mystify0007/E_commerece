@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getArtisanRequest } from "../../services/artisanService.js";
 import { listProductsRequest } from "../../services/productService.js";
 import { ProductCard } from "../../components/product/ProductCard.jsx";
+import { ReviewList } from "../../components/review/ReviewList.jsx";
+import { listArtisanReviewsRequest } from "../../services/reviewService.js";
 import { Spinner } from "../../components/common/Spinner.jsx";
 import { ErrorState, EmptyState } from "../../components/common/EmptyState.jsx";
 
@@ -70,6 +72,13 @@ export function ArtisanProfile() {
             ))}
           </div>
         )}
+      </div>
+
+      <div className="mt-10">
+        <h2 className="text-lg font-semibold text-stone-900">Reviews</h2>
+        <div className="mt-4">
+          <ReviewList targetType="Artisan" targetId={id} queryFn={listArtisanReviewsRequest} />
+        </div>
       </div>
     </div>
   );

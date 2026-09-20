@@ -8,6 +8,8 @@ import { getWishlistRequest, addToWishlistRequest, removeFromWishlistRequest } f
 import { useAuth } from "../../context/AuthContext.jsx";
 import { ProductCard } from "../../components/product/ProductCard.jsx";
 import { SizeHelper } from "../../components/product/SizeHelper.jsx";
+import { ReviewList } from "../../components/review/ReviewList.jsx";
+import { listProductReviewsRequest } from "../../services/reviewService.js";
 import { Spinner } from "../../components/common/Spinner.jsx";
 import { ErrorState } from "../../components/common/EmptyState.jsx";
 import { Button } from "../../components/common/Button.jsx";
@@ -195,6 +197,13 @@ export function ProductDetails() {
               </Link>
             )}
           </div>
+        </div>
+      </div>
+
+      <div className="mt-16">
+        <h2 className="text-lg font-semibold text-stone-900">Reviews</h2>
+        <div className="mt-4">
+          <ReviewList targetType="Product" targetId={id} queryFn={listProductReviewsRequest} />
         </div>
       </div>
 

@@ -25,6 +25,8 @@ import wishlistRoutes from "./routes/wishlistRoutes.js";
 import recommendationRoutes from "./routes/recommendationRoutes.js";
 import sizingRoutes from "./routes/sizingRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
+import reviewRoutes from "./routes/reviewRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 
 const app = express();
 
@@ -63,6 +65,8 @@ app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/recommendations", recommendationRoutes);
 app.use("/api/sizing", sizingRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/reviews", reviewRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

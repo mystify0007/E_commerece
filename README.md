@@ -52,7 +52,12 @@ development roadmap, and dependency list.
       always reviewed by the artisan before applying). Also added a minimal
       real Wishlist module (Module 14), since recommendations needed it and
       it closed a placeholder gap.
-- [ ] Phase 11 — Reviews & notifications
+- [x] **Phase 11** — Reviews & real-time notifications: product/artisan
+      reviews gated by actual delivered-order eligibility (server-verified,
+      not just a form the customer could submit from anywhere), rating
+      aggregation, admin moderation endpoint; notifications listed/marked
+      read via the API and pushed live over the existing Socket.IO
+      connection (bell icon with unread badge in the navbar)
 - [ ] Phase 13 — Testing & deployment
 
 ## Project layout

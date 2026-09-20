@@ -131,4 +131,14 @@ describe("HTTP layer (no database required)", () => {
     const res = await request(app).post("/api/ai/product-assist").send({ name: "Brown leather boot" });
     expect(res.status).toBe(401);
   });
+
+  test("submitting a review requires authentication", async () => {
+    const res = await request(app).post("/api/reviews").send({});
+    expect(res.status).toBe(401);
+  });
+
+  test("notifications require authentication", async () => {
+    const res = await request(app).get("/api/notifications");
+    expect(res.status).toBe(401);
+  });
 });

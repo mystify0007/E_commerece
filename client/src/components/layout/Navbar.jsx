@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { getCartRequest } from "../../services/cartService.js";
 import { Button } from "../common/Button.jsx";
+import { NotificationBell } from "../notification/NotificationBell.jsx";
 
 const navLink = ({ isActive }) =>
   `text-sm font-medium transition-colors ${isActive ? "text-brand-700" : "text-stone-600 hover:text-stone-900"}`;
@@ -47,6 +48,7 @@ export function Navbar() {
                   </Link>
                 </>
               )}
+              <NotificationBell />
               <Link
                 to={user.role === "admin" ? "/admin" : user.role === "artisan" ? "/artisan" : "/dashboard"}
                 className="text-sm font-medium text-stone-700 hover:text-stone-900"
