@@ -19,6 +19,7 @@ import adminRoutes from "./routes/adminRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import customizationRoutes from "./routes/customizationRoutes.js";
 
 const app = express();
 
@@ -51,6 +52,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/customizations", customizationRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

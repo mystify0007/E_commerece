@@ -8,6 +8,7 @@ import { Login } from "../pages/public/Login.jsx";
 import { Register } from "../pages/public/Register.jsx";
 import { Shop } from "../pages/public/Shop.jsx";
 import { ProductDetails } from "../pages/public/ProductDetails.jsx";
+import { Customizer } from "../pages/public/Customizer.jsx";
 import { ArtisanMarketplace } from "../pages/public/ArtisanMarketplace.jsx";
 import { ArtisanProfile } from "../pages/public/ArtisanProfile.jsx";
 import { ComingSoon } from "../pages/public/ComingSoon.jsx";
@@ -23,6 +24,7 @@ import { ArtisanProducts } from "../pages/artisan/Products.jsx";
 import { ArtisanAddProduct } from "../pages/artisan/AddProduct.jsx";
 import { ArtisanEditProduct } from "../pages/artisan/EditProduct.jsx";
 import { ArtisanOrders } from "../pages/artisan/Orders.jsx";
+import { ArtisanProductCustomizations } from "../pages/artisan/ProductCustomizations.jsx";
 import { AdminDashboard } from "../pages/admin/Dashboard.jsx";
 import { AdminUsers } from "../pages/admin/Users.jsx";
 import { AdminArtisans } from "../pages/admin/Artisans.jsx";
@@ -38,9 +40,10 @@ export function AppRouter() {
         <Route path="/register" element={<Register />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/products/:id" element={<ProductDetails />} />
+        <Route path="/products/:id/customize" element={<Customizer />} />
         <Route path="/artisans" element={<ArtisanMarketplace />} />
         <Route path="/artisans/:id" element={<ArtisanProfile />} />
-        <Route path="/custom-shoes" element={<ComingSoon title="Custom Shoes" phase="Phase 8 — Customization" />} />
+        <Route path="/custom-shoes" element={<ComingSoon title="Custom Shoes" phase="Phase 9 — Custom Production" />} />
         <Route path="/about" element={<ComingSoon title="About JuttaX" phase="a later content phase" />} />
 
         <Route element={<ProtectedRoute />}>
@@ -62,6 +65,7 @@ export function AppRouter() {
           <Route path="/artisan/products/new" element={<ArtisanAddProduct />} />
           <Route path="/artisan/products/:id/edit" element={<ArtisanEditProduct />} />
           <Route path="/artisan/orders" element={<ArtisanOrders />} />
+          <Route path="/artisan/products/:id/customizations" element={<ArtisanProductCustomizations />} />
         </Route>
       </Route>
 

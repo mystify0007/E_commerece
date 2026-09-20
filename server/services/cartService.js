@@ -80,8 +80,17 @@ export async function getCartWithPricing(userId) {
       continue;
     }
     const optionIds = item.customizationSelections.map((s) => s.option).filter(Boolean);
-    const { unitPrice, selections } = await calculateLineItemPrice(item.product, optionIds);
-    const lineTotal = unitPrice * item.quantity;
+    let priced;
+    try {
+      priced = await calculateLineItemPrice(item.product, optionIds);
+    } catch {
+      // A previously-selected customization option was removed/deactivated
+      // since this was added to the cart — surface it as unavailable rather
+      // than failing the whole cart response.
+      items.push({ _id: item._id, unavailable: true, product: item.product });
+      continue;
+    }
+    const lineTotal = priced.unitPrice * item.quantity;
     subtotal += lineTotal;
 
     items.push({
@@ -90,9 +99,9 @@ export async function getCartWithPricing(userId) {
       quantity: item.quantity,
       size: item.size,
       personalizationText: item.personalizationText,
-      unitPrice,
+      unitPrice: priced.unitPrice,
       lineTotal,
-      selections,
+      selections: priced.selections,
       inStock: item.product.stock >= item.quantity,
     });
   }

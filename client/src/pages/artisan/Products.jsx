@@ -64,6 +64,9 @@ export function ArtisanProducts() {
                   <Link to={`/artisan/products/${product._id}/edit`}>
                     <Button variant="outline">Edit</Button>
                   </Link>
+                  <Link to={`/artisan/products/${product._id}/customizations`}>
+                    <Button variant="outline">Customize</Button>
+                  </Link>
                   <Button variant="secondary" onClick={() => handleArchive(product._id)}>
                     Archive
                   </Button>

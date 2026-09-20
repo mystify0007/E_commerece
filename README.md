@@ -34,7 +34,10 @@ development roadmap, and dependency list.
       blocking live testing): dashboard stats, user management, artisan
       verification queue, product moderation queue, category CRUD, audit
       logging on moderation actions
-- [ ] Phase 8 — Customization
+- [x] **Phase 8** — Shoe customizer: artisan-managed customization options
+      (style/color/material/sole/personalization) per product, live-priced
+      customizer UI, server-authoritative pricing shared by cart, checkout,
+      and a public price-preview endpoint
 - [ ] Phase 9 — Custom production tracking
 - [ ] Phase 10 — AI (recommendations, sizing, listing assistant)
 - [ ] Phase 11 — Reviews & notifications
