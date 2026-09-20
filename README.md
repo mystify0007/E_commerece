@@ -20,45 +20,61 @@ development roadmap, and dependency list.
 - [x] **Phase 4** — Customer foundations (dashboard shell, profile, browsing)
 - [x] **Phase 5** — Product marketplace (categories, product CRUD with admin
       approval, server-side search/filter/sort/pagination, product details,
-      basic same-category "similar products")
-- [x] **Phase 6 (partial)** — Artisan marketplace (public artisan listing +
-      profile, artisan shop-profile editing, admin verification endpoint).
-      Full seller analytics/dashboard polish still lands in Phase 17/18.
+      same-category "similar products")
+- [x] **Phase 6** — Artisan marketplace (public artisan listing + profile
+      with reviews, shop-profile editing, admin verification workflow)
 - [x] **Phase 7** — Cart & checkout: server-priced cart, transactional order
       creation (Mongo session + `withTransaction`) with atomic stock
       decrement, pluggable payment adapter (working `cod`/`mock` providers;
       `esewa`/`khalti` scaffolded but honestly disabled until real sandbox
       credentials + verified API docs are added), order tracking for
       customer/artisan/admin with per-artisan data isolation on shared orders
-- [x] **Phase 12** — Admin (pulled forward from Phase 7/8, since it was
-      blocking live testing): dashboard stats, user management, artisan
-      verification queue, product moderation queue, category CRUD, audit
-      logging on moderation actions
 - [x] **Phase 8** — Shoe customizer: artisan-managed customization options
       (style/color/material/sole/personalization) per product, live-priced
       customizer UI, server-authoritative pricing shared by cart, checkout,
       and a public price-preview endpoint
-- [x] **Phase 9** — Custom shoe requests: request -> artisan proposal ->
-      accept/reject/request-changes -> 10-stage production timeline, with
-      the request locked to whichever verified artisan responds first and
-      stage transitions enforced by a guard (no skipping ahead)
+- [x] **Phase 9** — Custom shoe requests: request → artisan proposal →
+      accept/reject/request-changes → 10-stage production timeline, with the
+      request locked to whichever verified artisan responds first and stage
+      transitions enforced by a guard (no skipping ahead)
 - [x] **Phase 10** — AI: content-based "Recommended For You" (built from real
       purchase history, category/material/color/price/artisan affinity, with
       a popular-products fallback for new customers), wishlist-based
-      recommendations, smart size estimator (real formula + fit/width
+      recommendations, smart size estimator (documented formula + fit/width
       adjustment + closest-available-size matching, with the required
       disclaimer), and an artisan listing assistant (heuristic category/
       material/color/tag/description suggestions — never auto-published,
-      always reviewed by the artisan before applying). Also added a minimal
-      real Wishlist module (Module 14), since recommendations needed it and
-      it closed a placeholder gap.
+      always reviewed by the artisan before applying). Also includes a real
+      Wishlist module (spec Module 14), added because recommendations needed
+      it.
 - [x] **Phase 11** — Reviews & real-time notifications: product/artisan
       reviews gated by actual delivered-order eligibility (server-verified,
-      not just a form the customer could submit from anywhere), rating
-      aggregation, admin moderation endpoint; notifications listed/marked
-      read via the API and pushed live over the existing Socket.IO
-      connection (bell icon with unread badge in the navbar)
-- [ ] Phase 13 — Testing & deployment
+      not just a form anyone logged in could submit), rating aggregation,
+      admin moderation endpoint; notifications listed/marked read via the
+      API and pushed live over Socket.IO (bell icon with unread badge)
+- [x] **Phase 12** — Admin dashboard: platform stats, user management,
+      artisan verification queue, product moderation queue, category CRUD,
+      audit logging on every moderation action
+- [x] **Phase 13** — Hardening pass: full authorization-matrix review across
+      every route (see below), dependency audits (0 vulnerabilities on both
+      client and server), no committed secrets, no stray debug output
+
+### Known, intentional gaps
+
+- **eSewa / Khalti** are wired into the same `PaymentProvider` interface as
+  the working `cod`/`mock` providers, but fail closed with a clear "not
+  configured" error rather than shipping guessed request/response field
+  names as if they were a verified integration. Add real sandbox
+  credentials and finish `services/paymentService/providers/{esewa,khalti}Provider.js`
+  against each gateway's current docs to go live.
+- **Admin review moderation** has a working API
+  (`PATCH /api/reviews/:id/moderate`) but no dedicated admin UI page yet —
+  everything else in the admin panel (users, artisans, products, categories)
+  does.
+- No route-based code-splitting yet (Vite prints a bundle-size advisory,
+  not an error) — the SPA is a single bundle.
+- Saved multi-address address books (the `Address` model) aren't wired into
+  checkout yet; checkout takes a shipping address inline per order.
 
 ## Project layout
 
@@ -93,7 +109,12 @@ cd server
 cp .env.example .env   # fill in MONGO_URI, JWT_SECRET, JWT_REFRESH_SECRET at minimum
 npm install
 npm run dev             # http://localhost:5000
+npm run seed             # creates a demo admin account + starter categories
 ```
+
+`npm run seed` prints the demo admin's email/password to the console. Log in
+with those credentials to reach `/admin` and verify artisans, approve
+products, and manage categories.
 
 ### Frontend
 
@@ -109,7 +130,7 @@ npm run dev              # http://localhost:5173
 ```bash
 cd server
 npm run test:http   # HTTP/middleware layer — no database required
-npm run test:db     # full integration suite against an in-memory MongoDB
+npm run test:db     # full integration suite against an in-memory MongoDB (replica set, for transactions)
 npm test             # both
 ```
 
@@ -120,9 +141,15 @@ verifies routing, validation, and the JWT auth/RBAC guards directly.
 
 ## Security notes
 
-- All prices are calculated and validated server-side — the client never
+- All prices (product, customization, checkout total) are calculated and
+  validated server-side from the current database state — the client never
   dictates a persisted price.
 - Every protected route enforces both authentication (valid JWT) and
-  authorization (role + resource ownership).
+  authorization (role + resource ownership) — reviewed route-by-route as
+  part of the Phase 13 hardening pass.
+- An artisan can never read or mutate another artisan's products, orders
+  (even within a shared multi-vendor cart, they only ever see their own
+  line items), or customization options.
 - Secrets (JWT, MongoDB, Cloudinary, AI, payment) live only in `.env`, never
   in source. See `server/.env.example` and `client/.env.example`.
+- `npm audit` reports 0 vulnerabilities on both `server/` and `client/`.
