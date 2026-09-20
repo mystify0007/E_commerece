@@ -9,18 +9,29 @@ export async function getOrCreateCart(userId) {
   return cart;
 }
 
-async function assertPurchasable(product, size) {
+async function assertPurchasable(product, size, color) {
   if (!product || product.status !== "approved") {
     throw ApiError.notFound("Product not found");
   }
   if (!product.sizesAvailable.includes(size)) {
     throw ApiError.badRequest(`Size ${size} is not available for this product`);
   }
+  if (product.colors.length > 0) {
+    if (!color) {
+      throw ApiError.badRequest("Please select a color for this product");
+    }
+    if (!product.colors.includes(color)) {
+      throw ApiError.badRequest(`Color "${color}" is not available for this product`);
+    }
+  }
 }
 
-export async function addItemToCart(userId, { product: productId, quantity, size, customizationOptions, personalizationText }) {
+export async function addItemToCart(
+  userId,
+  { product: productId, quantity, size, color, customizationOptions, personalizationText }
+) {
   const product = await Product.findById(productId);
-  await assertPurchasable(product, size);
+  await assertPurchasable(product, size, color);
 
   // Validates the selection now so the customer sees an error immediately,
   // even though checkout re-validates authoritatively again.
@@ -31,6 +42,7 @@ export async function addItemToCart(userId, { product: productId, quantity, size
     product: productId,
     quantity,
     size,
+    color: product.colors.length > 0 ? color : undefined,
     customizationSelections: (customizationOptions || []).map((id) => ({ option: id })),
     personalizationText,
   });
@@ -98,6 +110,7 @@ export async function getCartWithPricing(userId) {
       product: item.product,
       quantity: item.quantity,
       size: item.size,
+      color: item.color,
       personalizationText: item.personalizationText,
       unitPrice: priced.unitPrice,
       lineTotal,

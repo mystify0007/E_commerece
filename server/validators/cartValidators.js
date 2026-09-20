@@ -6,6 +6,7 @@ export const addCartItemSchema = z.object({
   product: objectId,
   quantity: z.coerce.number().int().min(1).max(20).default(1),
   size: z.coerce.number(),
+  color: z.string().trim().min(1).max(50).optional(),
   customizationOptions: z.array(objectId).max(10).optional(),
   personalizationText: z.string().trim().max(60).optional(),
 });

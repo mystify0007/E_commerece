@@ -54,7 +54,7 @@ async function fullPurchaseFlow() {
   await request(app)
     .post("/api/cart/items")
     .set("Authorization", `Bearer ${customer.accessToken}`)
-    .send({ product: productRes.body.data._id, quantity: 1, size: 41 });
+    .send({ product: productRes.body.data._id, quantity: 1, size: 41, color: "brown" });
   const orderRes = await request(app)
     .post("/api/orders")
     .set("Authorization", `Bearer ${customer.accessToken}`)

@@ -128,7 +128,8 @@ export function Checkout() {
                 <div className="flex-1 text-sm">
                   <p className="font-medium text-stone-900">{item.product.name}</p>
                   <p className="text-stone-500">
-                    Size {item.size} × {item.quantity}
+                    Size {item.size}
+                    {item.color && ` · Color ${item.color}`} × {item.quantity}
                   </p>
                 </div>
                 <span className="text-sm font-medium text-stone-900">{formatCurrency(item.lineTotal)}</span>

@@ -22,6 +22,7 @@ export function ProductDetails() {
   const queryClient = useQueryClient();
   const [activeImage, setActiveImage] = useState(0);
   const [size, setSize] = useState(null);
+  const [color, setColor] = useState(null);
   const [adding, setAdding] = useState(false);
 
   const { data: product, isLoading, isError } = useQuery({
@@ -76,9 +77,13 @@ export function ProductDetails() {
       toast.error("Please select a size");
       return;
     }
+    if (product.colors.length > 0 && !color) {
+      toast.error("Please select a color");
+      return;
+    }
     setAdding(true);
     try {
-      await addCartItemRequest({ product: id, quantity: 1, size });
+      await addCartItemRequest({ product: id, quantity: 1, size, color: color || undefined });
       await queryClient.invalidateQueries({ queryKey: ["cart"] });
       toast.success("Added to cart");
     } catch (err) {
@@ -148,10 +153,6 @@ export function ProductDetails() {
                 <dd className="font-medium text-stone-900">{product.soleType}</dd>
               </div>
             )}
-            <div>
-              <dt className="text-stone-500">Colors</dt>
-              <dd className="font-medium text-stone-900">{product.colors.join(", ")}</dd>
-            </div>
             {product.productionTimeDays > 0 && (
               <div>
                 <dt className="text-stone-500">Production time</dt>
@@ -163,6 +164,27 @@ export function ProductDetails() {
               <dd className="font-medium text-stone-900">{product.stock > 0 ? `${product.stock} available` : "Out of stock"}</dd>
             </div>
           </dl>
+
+          {product.colors.length > 0 && (
+            <div className="mt-6">
+              <span className="mb-1.5 block text-sm font-medium text-stone-700">
+                Color{color ? `: ${color}` : ""}
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {product.colors.map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setColor(c)}
+                    className={`rounded-lg border px-3.5 py-2 text-sm font-medium capitalize ${
+                      color === c ? "border-brand-500 bg-brand-50 text-brand-700" : "border-stone-300 text-stone-700"
+                    }`}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="mt-6">
             <span className="mb-1.5 block text-sm font-medium text-stone-700">Size</span>

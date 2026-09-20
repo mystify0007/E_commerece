@@ -80,7 +80,7 @@ describe("Cart & checkout", () => {
     const addRes = await request(app)
       .post("/api/cart/items")
       .set("Authorization", `Bearer ${customer.accessToken}`)
-      .send({ product: productId, quantity: 2, size: 41 });
+      .send({ product: productId, quantity: 2, size: 41, color: "brown" });
     expect(addRes.status).toBe(201);
     expect(addRes.body.data.subtotal).toBe(7000);
 
@@ -116,7 +116,7 @@ describe("Cart & checkout", () => {
     await request(app)
       .post("/api/cart/items")
       .set("Authorization", `Bearer ${customer.accessToken}`)
-      .send({ product: productId, quantity: 1, size: 41 });
+      .send({ product: productId, quantity: 1, size: 41, color: "brown" });
 
     const orderRes = await request(app)
       .post("/api/orders")
@@ -158,7 +158,7 @@ describe("Cart & checkout", () => {
     await request(app)
       .post("/api/cart/items")
       .set("Authorization", `Bearer ${customer.accessToken}`)
-      .send({ product: productId, quantity: 1, size: 41 });
+      .send({ product: productId, quantity: 1, size: 41, color: "brown" });
 
     // Simulate the stock being sold out by another order between add-to-cart
     // and checkout.
@@ -185,7 +185,7 @@ describe("Cart & checkout", () => {
     await request(app)
       .post("/api/cart/items")
       .set("Authorization", `Bearer ${customer1.accessToken}`)
-      .send({ product: productId, quantity: 1, size: 41 });
+      .send({ product: productId, quantity: 1, size: 41, color: "brown" });
     const orderRes = await request(app)
       .post("/api/orders")
       .set("Authorization", `Bearer ${customer1.accessToken}`)
@@ -234,11 +234,11 @@ describe("Cart & checkout", () => {
     await request(app)
       .post("/api/cart/items")
       .set("Authorization", `Bearer ${customer.accessToken}`)
-      .send({ product: productA, quantity: 1, size: 41 });
+      .send({ product: productA, quantity: 1, size: 41, color: "brown" });
     await request(app)
       .post("/api/cart/items")
       .set("Authorization", `Bearer ${customer.accessToken}`)
-      .send({ product: productBRes.body.data._id, quantity: 1, size: 40 });
+      .send({ product: productBRes.body.data._id, quantity: 1, size: 40, color: "white" });
 
     const orderRes = await request(app)
       .post("/api/orders")

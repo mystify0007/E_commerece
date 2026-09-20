@@ -38,6 +38,9 @@ export async function createOrderFromCart(userId, { shippingAddress, paymentProv
         if (!product.sizesAvailable.includes(cartItem.size)) {
           throw ApiError.badRequest(`Size ${cartItem.size} is no longer available for "${product.name}"`);
         }
+        if (product.colors.length > 0 && !product.colors.includes(cartItem.color)) {
+          throw ApiError.badRequest(`Color "${cartItem.color}" is no longer available for "${product.name}"`);
+        }
 
         const optionIds = cartItem.customizationSelections.map((s) => s.option).filter(Boolean);
         const { unitPrice, selections } = await calculateLineItemPrice(product, optionIds);
@@ -71,6 +74,7 @@ export async function createOrderFromCart(userId, { shippingAddress, paymentProv
           quantity: cartItem.quantity,
           unitPrice,
           size: cartItem.size,
+          color: cartItem.color,
           customizationSnapshot:
             selections.length > 0 || cartItem.personalizationText
               ? { selections, personalizationText: cartItem.personalizationText }

@@ -71,7 +71,8 @@ export function CustomerOrderDetails() {
                 <div className="flex-1">
                   <p className="font-medium text-stone-900">{item.product?.name}</p>
                   <p className="text-sm text-stone-500">
-                    Size {item.size} × {item.quantity} · {item.artisan?.shopName}
+                    Size {item.size}
+                    {item.color && ` · Color ${item.color}`} × {item.quantity} · {item.artisan?.shopName}
                   </p>
                 </div>
                 <span className="font-medium text-stone-900">{formatCurrency(item.lineTotal)}</span>

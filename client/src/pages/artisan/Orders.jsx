@@ -53,7 +53,8 @@ export function ArtisanOrders() {
               <div className="flex-1">
                 <p className="font-medium text-stone-900">{item.product?.name}</p>
                 <p className="text-sm text-stone-500">
-                  Size {item.size} × {item.quantity} · {formatCurrency(item.lineTotal)}
+                  Size {item.size}
+                  {item.color && ` · Color ${item.color}`} × {item.quantity} · {formatCurrency(item.lineTotal)}
                 </p>
               </div>
               <span className="rounded-full bg-stone-100 px-2.5 py-1 text-xs font-medium capitalize text-stone-600">

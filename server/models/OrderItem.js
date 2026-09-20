@@ -25,6 +25,7 @@ const orderItemSchema = new Schema(
     quantity: { type: Number, required: true, min: 1 },
     unitPrice: { type: Number, required: true, min: 0 },
     size: { type: Number, required: true },
+    color: { type: String, trim: true },
     customizationSnapshot: { type: customizationSnapshotSchema, default: null },
     lineTotal: { type: Number, required: true, min: 0 },
   },

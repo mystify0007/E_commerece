@@ -96,7 +96,7 @@ describe("Shoe customizer", () => {
     const addRes = await request(app)
       .post("/api/cart/items")
       .set("Authorization", `Bearer ${customer.accessToken}`)
-      .send({ product: productId, quantity: 1, size: 41, customizationOptions: [optionRes.body.data._id] });
+      .send({ product: productId, quantity: 1, size: 41, color: "brown", customizationOptions: [optionRes.body.data._id] });
     expect(addRes.body.data.items[0].unitPrice).toBe(3800);
 
     const orderRes = await request(app)

@@ -65,7 +65,8 @@ export function Cart() {
                     {item.product.name}
                   </Link>
                   <p className="text-sm text-stone-500">
-                    Size {item.size} · {item.product.artisan?.shopName}
+                    Size {item.size}
+                    {item.color && ` · Color ${item.color}`} · {item.product.artisan?.shopName}
                   </p>
                   {!item.inStock && <p className="text-xs text-red-600">Not enough stock available</p>}
                 </div>
