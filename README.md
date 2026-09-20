@@ -109,12 +109,20 @@ cd server
 cp .env.example .env   # fill in MONGO_URI, JWT_SECRET, JWT_REFRESH_SECRET at minimum
 npm install
 npm run dev             # http://localhost:5000
-npm run seed             # creates a demo admin account + starter categories
+npm run seed             # demo admin, categories, 5 verified artisans, 3
+                           # customers, and ~12 Nepali-market handmade
+                           # footwear products (traditional juta, trekking
+                           # boots, leather formal shoes, sandals, sneakers)
 ```
 
-`npm run seed` prints the demo admin's email/password to the console. Log in
-with those credentials to reach `/admin` and verify artisans, approve
-products, and manage categories.
+Re-running `npm run seed` is safe — it only creates what's missing, so it
+won't duplicate accounts or products on a second run.
+
+`npm run seed` prints every demo account's email/password to the console
+(admin, artisans, customers — artisans and customers all share one demo
+password). Log in as admin to reach `/admin`; log in as one of the seeded
+customers to browse `/shop` and `/artisans` with real, populated listings
+right away — no manual data entry needed.
 
 ### Frontend
 
