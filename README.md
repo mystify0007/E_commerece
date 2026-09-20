@@ -136,10 +136,12 @@ cd server
 cp .env.example .env   # fill in MONGO_URI, JWT_SECRET, JWT_REFRESH_SECRET at minimum
 npm install
 npm run dev             # http://localhost:5000
-npm run seed             # demo admin, categories, 5 verified artisans, 3
-                           # customers, and ~12 Nepali-market handmade
-                           # footwear products (traditional juta, trekking
-                           # boots, leather formal shoes, sandals, sneakers)
+npm run seed             # demo admin, categories, 5 verified craftsmen
+                           # (artisan accounts), 3 customers, and 15
+                           # Nepali-market handmade footwear products, each
+                           # with 2-3 color variants (traditional juta,
+                           # trekking boots, leather formal shoes, sandals,
+                           # sneakers)
 ```
 
 Re-running `npm run seed` is safe — it only creates what's missing, so it
