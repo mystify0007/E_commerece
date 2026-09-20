@@ -24,12 +24,20 @@ development roadmap, and dependency list.
 - [x] **Phase 6 (partial)** — Artisan marketplace (public artisan listing +
       profile, artisan shop-profile editing, admin verification endpoint).
       Full seller analytics/dashboard polish still lands in Phase 17/18.
-- [ ] Phase 7 — Cart & orders
+- [x] **Phase 7** — Cart & checkout: server-priced cart, transactional order
+      creation (Mongo session + `withTransaction`) with atomic stock
+      decrement, pluggable payment adapter (working `cod`/`mock` providers;
+      `esewa`/`khalti` scaffolded but honestly disabled until real sandbox
+      credentials + verified API docs are added), order tracking for
+      customer/artisan/admin with per-artisan data isolation on shared orders
+- [x] **Phase 12** — Admin (pulled forward from Phase 7/8, since it was
+      blocking live testing): dashboard stats, user management, artisan
+      verification queue, product moderation queue, category CRUD, audit
+      logging on moderation actions
 - [ ] Phase 8 — Customization
 - [ ] Phase 9 — Custom production tracking
 - [ ] Phase 10 — AI (recommendations, sizing, listing assistant)
 - [ ] Phase 11 — Reviews & notifications
-- [ ] Phase 12 — Admin
 - [ ] Phase 13 — Testing & deployment
 
 ## Project layout

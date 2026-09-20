@@ -93,4 +93,15 @@ describe("HTTP layer (no database required)", () => {
     const res = await request(app).get("/api/admin/dashboard");
     expect(res.status).toBe(401);
   });
+
+  test("cart requires authentication", async () => {
+    const res = await request(app).get("/api/cart");
+    expect(res.status).toBe(401);
+  });
+
+  test("placing an order requires authentication", async () => {
+    const res = await request(app).post("/api/orders").send({});
+    expect(res.status).toBe(401);
+  });
+
 });

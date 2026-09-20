@@ -13,11 +13,16 @@ import { ArtisanProfile } from "../pages/public/ArtisanProfile.jsx";
 import { ComingSoon } from "../pages/public/ComingSoon.jsx";
 import { NotFound } from "../pages/public/NotFound.jsx";
 import { CustomerDashboard } from "../pages/customer/Dashboard.jsx";
+import { Cart } from "../pages/customer/Cart.jsx";
+import { Checkout } from "../pages/customer/Checkout.jsx";
+import { CustomerOrders } from "../pages/customer/Orders.jsx";
+import { CustomerOrderDetails } from "../pages/customer/OrderDetails.jsx";
 import { ArtisanDashboard } from "../pages/artisan/Dashboard.jsx";
 import { ArtisanShopProfile } from "../pages/artisan/ShopProfile.jsx";
 import { ArtisanProducts } from "../pages/artisan/Products.jsx";
 import { ArtisanAddProduct } from "../pages/artisan/AddProduct.jsx";
 import { ArtisanEditProduct } from "../pages/artisan/EditProduct.jsx";
+import { ArtisanOrders } from "../pages/artisan/Orders.jsx";
 import { AdminDashboard } from "../pages/admin/Dashboard.jsx";
 import { AdminUsers } from "../pages/admin/Users.jsx";
 import { AdminArtisans } from "../pages/admin/Artisans.jsx";
@@ -40,6 +45,10 @@ export function AppRouter() {
 
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<CustomerDashboard />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/orders" element={<CustomerOrders />} />
+          <Route path="/orders/:id" element={<CustomerOrderDetails />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />
@@ -52,6 +61,7 @@ export function AppRouter() {
           <Route path="/artisan/products" element={<ArtisanProducts />} />
           <Route path="/artisan/products/new" element={<ArtisanAddProduct />} />
           <Route path="/artisan/products/:id/edit" element={<ArtisanEditProduct />} />
+          <Route path="/artisan/orders" element={<ArtisanOrders />} />
         </Route>
       </Route>
 

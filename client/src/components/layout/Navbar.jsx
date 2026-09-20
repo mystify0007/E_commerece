@@ -1,5 +1,7 @@
 import { Link, NavLink } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { getCartRequest } from "../../services/cartService.js";
 import { Button } from "../common/Button.jsx";
 
 const navLink = ({ isActive }) =>
@@ -7,6 +9,11 @@ const navLink = ({ isActive }) =>
 
 export function Navbar() {
   const { user, logout } = useAuth();
+  const { data: cart } = useQuery({
+    queryKey: ["cart"],
+    queryFn: getCartRequest,
+    enabled: user?.role === "customer",
+  });
 
   return (
     <header className="border-b border-stone-200 bg-white/90 backdrop-blur">
@@ -25,6 +32,16 @@ export function Navbar() {
         <div className="flex items-center gap-3">
           {user ? (
             <>
+              {user.role === "customer" && (
+                <Link to="/cart" className="relative text-sm font-medium text-stone-700 hover:text-stone-900">
+                  Cart
+                  {cart?.itemCount > 0 && (
+                    <span className="absolute -right-3 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[10px] font-semibold text-white">
+                      {cart.itemCount}
+                    </span>
+                  )}
+                </Link>
+              )}
               <Link
                 to={user.role === "admin" ? "/admin" : user.role === "artisan" ? "/artisan" : "/dashboard"}
                 className="text-sm font-medium text-stone-700 hover:text-stone-900"

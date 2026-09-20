@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import { getProductRequest, getSimilarProductsRequest } from "../../services/productService.js";
+import { addCartItemRequest } from "../../services/cartService.js";
+import { useAuth } from "../../context/AuthContext.jsx";
 import { ProductCard } from "../../components/product/ProductCard.jsx";
 import { Spinner } from "../../components/common/Spinner.jsx";
 import { ErrorState } from "../../components/common/EmptyState.jsx";
@@ -10,7 +13,12 @@ import { formatCurrency } from "../../utils/formatCurrency.js";
 
 export function ProductDetails() {
   const { id } = useParams();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [activeImage, setActiveImage] = useState(0);
+  const [size, setSize] = useState(null);
+  const [adding, setAdding] = useState(false);
 
   const { data: product, isLoading, isError } = useQuery({
     queryKey: ["product", id],
@@ -22,6 +30,31 @@ export function ProductDetails() {
     queryFn: () => getSimilarProductsRequest(id),
     enabled: Boolean(product),
   });
+
+  async function handleAddToCart() {
+    if (!user) {
+      navigate("/login", { state: { from: { pathname: `/products/${id}` } } });
+      return;
+    }
+    if (user.role !== "customer") {
+      toast.error("Only customer accounts can add products to a cart");
+      return;
+    }
+    if (!size) {
+      toast.error("Please select a size");
+      return;
+    }
+    setAdding(true);
+    try {
+      await addCartItemRequest({ product: id, quantity: 1, size });
+      await queryClient.invalidateQueries({ queryKey: ["cart"] });
+      toast.success("Added to cart");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to add to cart");
+    } finally {
+      setAdding(false);
+    }
+  }
 
   if (isLoading) return <Spinner />;
   if (isError || !product) return <ErrorState message="Product not found." />;
@@ -84,10 +117,6 @@ export function ProductDetails() {
               </div>
             )}
             <div>
-              <dt className="text-stone-500">Sizes available</dt>
-              <dd className="font-medium text-stone-900">{product.sizesAvailable.join(", ")}</dd>
-            </div>
-            <div>
               <dt className="text-stone-500">Colors</dt>
               <dd className="font-medium text-stone-900">{product.colors.join(", ")}</dd>
             </div>
@@ -103,14 +132,34 @@ export function ProductDetails() {
             </div>
           </dl>
 
-          <div className="mt-8 flex gap-3">
-            <Button disabled={product.stock === 0} className="flex-1">
+          <div className="mt-6">
+            <span className="mb-1.5 block text-sm font-medium text-stone-700">Size</span>
+            <div className="flex flex-wrap gap-2">
+              {product.sizesAvailable.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setSize(s)}
+                  className={`h-10 w-10 rounded-lg border text-sm font-medium ${
+                    size === s ? "border-brand-500 bg-brand-50 text-brand-700" : "border-stone-300 text-stone-700"
+                  }`}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-6 flex gap-3">
+            <Button disabled={product.stock === 0} isLoading={adding} onClick={handleAddToCart} className="flex-1">
               Add to Cart
             </Button>
-            <Button variant="outline">Wishlist</Button>
-            {product.isCustomizable && <Button variant="outline">Customize</Button>}
+            {product.isCustomizable && (
+              <Link to={`/products/${id}/customize`}>
+                <Button variant="outline">Customize</Button>
+              </Link>
+            )}
           </div>
-          <p className="mt-2 text-xs text-stone-400">Cart & checkout ship in Phase 7 of the roadmap.</p>
+          <p className="mt-2 text-xs text-stone-400">Wishlist ships in a later phase.</p>
         </div>
       </div>
 

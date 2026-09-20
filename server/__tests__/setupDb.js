@@ -1,4 +1,4 @@
-import { MongoMemoryServer } from "mongodb-memory-server";
+import { MongoMemoryReplSet } from "mongodb-memory-server";
 import mongoose from "mongoose";
 
 process.env.NODE_ENV = "test";
@@ -8,11 +8,15 @@ process.env.CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 
 jest.setTimeout(60000); // first run downloads a real mongod binary, which can be slow
 
-let mongod;
+let replSet;
 
 beforeAll(async () => {
-  mongod = await MongoMemoryServer.create();
-  process.env.MONGO_URI = mongod.getUri();
+  // A single-node replica set (not a plain standalone MongoMemoryServer) is
+  // required so multi-document transactions work — the checkout flow uses
+  // mongoose.startSession()/withTransaction() and standalone mongod does not
+  // support that.
+  replSet = await MongoMemoryReplSet.create({ replSet: { count: 1 } });
+  process.env.MONGO_URI = replSet.getUri();
   await mongoose.connect(process.env.MONGO_URI);
 });
 
@@ -25,5 +29,5 @@ afterEach(async () => {
 
 afterAll(async () => {
   await mongoose.disconnect();
-  if (mongod) await mongod.stop();
+  if (replSet) await replSet.stop();
 });
