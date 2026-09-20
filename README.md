@@ -42,6 +42,22 @@ docs/     Architecture and planning documentation
 
 ## Getting started
 
+### MongoDB (via Docker)
+
+A `docker-compose.yml` is provided at the repo root:
+
+```bash
+docker compose up -d mongo   # starts MongoDB on localhost:27017, persisted in a named volume
+docker compose ps            # confirm it's running
+docker compose logs -f mongo # tail logs if something looks wrong
+docker compose down          # stop it (data persists in the volume)
+```
+
+With this running, `MONGO_URI=mongodb://localhost:27017/juttax` (already the
+default in `server/.env.example`) will work as-is. No local MongoDB install
+needed. `MONGO_URI` can also point at a native `mongod` install or a free
+MongoDB Atlas cluster instead — any standard MongoDB connection string works.
+
 ### Backend
 
 ```bash
@@ -50,9 +66,6 @@ cp .env.example .env   # fill in MONGO_URI, JWT_SECRET, JWT_REFRESH_SECRET at mi
 npm install
 npm run dev             # http://localhost:5000
 ```
-
-`MONGO_URI` can point at a local `mongod`, a Docker container, or a free
-MongoDB Atlas cluster — any standard MongoDB connection string works.
 
 ### Frontend
 
