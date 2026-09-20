@@ -33,14 +33,19 @@ export function Navbar() {
           {user ? (
             <>
               {user.role === "customer" && (
-                <Link to="/cart" className="relative text-sm font-medium text-stone-700 hover:text-stone-900">
-                  Cart
-                  {cart?.itemCount > 0 && (
-                    <span className="absolute -right-3 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[10px] font-semibold text-white">
-                      {cart.itemCount}
-                    </span>
-                  )}
-                </Link>
+                <>
+                  <Link to="/wishlist" className="text-sm font-medium text-stone-700 hover:text-stone-900">
+                    Wishlist
+                  </Link>
+                  <Link to="/cart" className="relative text-sm font-medium text-stone-700 hover:text-stone-900">
+                    Cart
+                    {cart?.itemCount > 0 && (
+                      <span className="absolute -right-3 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[10px] font-semibold text-white">
+                        {cart.itemCount}
+                      </span>
+                    )}
+                  </Link>
+                </>
               )}
               <Link
                 to={user.role === "admin" ? "/admin" : user.role === "artisan" ? "/artisan" : "/dashboard"}

@@ -108,4 +108,27 @@ describe("HTTP layer (no database required)", () => {
     const res = await request(app).post("/api/custom-orders").send({});
     expect(res.status).toBe(401);
   });
+
+  test("size recommendation is a pure calculation and needs no auth or DB", async () => {
+    const res = await request(app).post("/api/sizing/recommend").send({ footLengthCm: 26, preferredFit: "regular" });
+    expect(res.status).toBe(200);
+    expect(res.body.data.estimatedSize).toBeCloseTo(41, 0);
+    expect(res.body.data.disclaimer).toMatch(/estimate/i);
+  });
+
+  test("size recommendation adjusts for fit preference", async () => {
+    const snug = await request(app).post("/api/sizing/recommend").send({ footLengthCm: 26, preferredFit: "snug" });
+    const loose = await request(app).post("/api/sizing/recommend").send({ footLengthCm: 26, preferredFit: "loose" });
+    expect(snug.body.data.estimatedSize).toBeLessThan(loose.body.data.estimatedSize);
+  });
+
+  test("wishlist requires authentication", async () => {
+    const res = await request(app).get("/api/wishlist");
+    expect(res.status).toBe(401);
+  });
+
+  test("AI product assist requires authentication", async () => {
+    const res = await request(app).post("/api/ai/product-assist").send({ name: "Brown leather boot" });
+    expect(res.status).toBe(401);
+  });
 });

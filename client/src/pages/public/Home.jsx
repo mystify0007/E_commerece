@@ -1,9 +1,22 @@
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { getPopularRequest, getForYouRequest } from "../../services/recommendationService.js";
+import { ProductCard } from "../../components/product/ProductCard.jsx";
 import { Button } from "../../components/common/Button.jsx";
 
 const CATEGORIES = ["Sneakers", "Boots", "Formal", "Sandals", "Traditional", "Hiking"];
 
 export function Home() {
+  const { user } = useAuth();
+
+  const { data: popular } = useQuery({ queryKey: ["popular-products"], queryFn: getPopularRequest });
+  const { data: forYou } = useQuery({
+    queryKey: ["for-you"],
+    queryFn: getForYouRequest,
+    enabled: user?.role === "customer",
+  });
+
   return (
     <div>
       <section className="border-b border-stone-200 bg-gradient-to-b from-brand-50 to-white">
@@ -39,7 +52,33 @@ export function Home() {
         </div>
       </section>
 
-      <section className="border-t border-stone-200 bg-stone-50">
+      {user?.role === "customer" && forYou && forYou.length > 0 && (
+        <section className="border-t border-stone-200">
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+            <h2 className="text-xl font-semibold text-stone-900">Recommended For You</h2>
+            <div className="mt-6 grid grid-cols-2 gap-5 sm:grid-cols-4">
+              {forYou.map((p) => (
+                <ProductCard key={p._id} product={p} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {popular && popular.length > 0 && (
+        <section className="border-t border-stone-200 bg-stone-50">
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+            <h2 className="text-xl font-semibold text-stone-900">Popular Handmade Footwear</h2>
+            <div className="mt-6 grid grid-cols-2 gap-5 sm:grid-cols-4">
+              {popular.map((p) => (
+                <ProductCard key={p._id} product={p} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section className="border-t border-stone-200">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <h2 className="text-xl font-semibold text-stone-900">Local Craft, Delivered</h2>
           <p className="mt-3 max-w-2xl text-stone-600">

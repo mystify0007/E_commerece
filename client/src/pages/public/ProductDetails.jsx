@@ -4,8 +4,10 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { getProductRequest, getSimilarProductsRequest } from "../../services/productService.js";
 import { addCartItemRequest } from "../../services/cartService.js";
+import { getWishlistRequest, addToWishlistRequest, removeFromWishlistRequest } from "../../services/wishlistService.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { ProductCard } from "../../components/product/ProductCard.jsx";
+import { SizeHelper } from "../../components/product/SizeHelper.jsx";
 import { Spinner } from "../../components/common/Spinner.jsx";
 import { ErrorState } from "../../components/common/EmptyState.jsx";
 import { Button } from "../../components/common/Button.jsx";
@@ -30,6 +32,34 @@ export function ProductDetails() {
     queryFn: () => getSimilarProductsRequest(id),
     enabled: Boolean(product),
   });
+
+  const { data: wishlist } = useQuery({
+    queryKey: ["wishlist"],
+    queryFn: getWishlistRequest,
+    enabled: user?.role === "customer",
+  });
+  const isWishlisted = wishlist?.items?.some((item) => item.product?._id === id);
+
+  async function handleToggleWishlist() {
+    if (!user) {
+      navigate("/login", { state: { from: { pathname: `/products/${id}` } } });
+      return;
+    }
+    if (user.role !== "customer") {
+      toast.error("Only customer accounts can use a wishlist");
+      return;
+    }
+    try {
+      if (isWishlisted) {
+        await removeFromWishlistRequest(id);
+      } else {
+        await addToWishlistRequest(id);
+      }
+      await queryClient.invalidateQueries({ queryKey: ["wishlist"] });
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to update wishlist");
+    }
+  }
 
   async function handleAddToCart() {
     if (!user) {
@@ -147,11 +177,17 @@ export function ProductDetails() {
                 </button>
               ))}
             </div>
+            <div className="mt-2">
+              <SizeHelper productId={id} onRecommend={setSize} />
+            </div>
           </div>
 
           <div className="mt-6 flex gap-3">
             <Button disabled={product.stock === 0} isLoading={adding} onClick={handleAddToCart} className="flex-1">
               Add to Cart
+            </Button>
+            <Button variant="outline" onClick={handleToggleWishlist}>
+              {isWishlisted ? "♥ Wishlisted" : "♡ Wishlist"}
             </Button>
             {product.isCustomizable && (
               <Link to={`/products/${id}/customize`}>
@@ -159,7 +195,6 @@ export function ProductDetails() {
               </Link>
             )}
           </div>
-          <p className="mt-2 text-xs text-stone-400">Wishlist ships in a later phase.</p>
         </div>
       </div>
 

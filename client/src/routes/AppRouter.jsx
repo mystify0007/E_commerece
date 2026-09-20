@@ -15,6 +15,7 @@ import { ComingSoon } from "../pages/public/ComingSoon.jsx";
 import { NotFound } from "../pages/public/NotFound.jsx";
 import { CustomerDashboard } from "../pages/customer/Dashboard.jsx";
 import { Cart } from "../pages/customer/Cart.jsx";
+import { Wishlist } from "../pages/customer/Wishlist.jsx";
 import { Checkout } from "../pages/customer/Checkout.jsx";
 import { CustomerOrders } from "../pages/customer/Orders.jsx";
 import { CustomerOrderDetails } from "../pages/customer/OrderDetails.jsx";
@@ -53,6 +54,7 @@ export function AppRouter() {
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<CustomerDashboard />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/orders" element={<CustomerOrders />} />
           <Route path="/orders/:id" element={<CustomerOrderDetails />} />

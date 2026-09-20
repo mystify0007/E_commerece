@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import { listCategoriesRequest } from "../../services/categoryService.js";
 import { uploadProductImagesRequest } from "../../services/productService.js";
+import { getProductAssistRequest } from "../../services/aiService.js";
 import { Input } from "../common/Input.jsx";
 import { Button } from "../common/Button.jsx";
 
@@ -10,10 +12,15 @@ export function ProductForm({ defaultValues, onSubmit, submitLabel = "Save" }) {
   const { data: categories } = useQuery({ queryKey: ["categories"], queryFn: listCategoriesRequest });
   const [images, setImages] = useState(defaultValues?.images || []);
   const [uploading, setUploading] = useState(false);
+  const [aiSuggestions, setAiSuggestions] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm({ defaultValues });
 
@@ -24,10 +31,28 @@ export function ProductForm({ defaultValues, onSubmit, submitLabel = "Save" }) {
     try {
       const urls = await uploadProductImagesRequest(files);
       setImages((prev) => [...prev, ...urls].slice(0, 6));
-    } catch {
-      // toast handled by caller-level interceptor pattern would go here in a fuller build
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to upload images");
     } finally {
       setUploading(false);
+    }
+  }
+
+  async function handleAiAssist() {
+    const name = watch("name");
+    const description = watch("description");
+    if (!name && !description) {
+      toast.error("Enter a product name or description first");
+      return;
+    }
+    setAiLoading(true);
+    try {
+      const suggestions = await getProductAssistRequest({ name, description });
+      setAiSuggestions(suggestions);
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to get suggestions");
+    } finally {
+      setAiLoading(false);
     }
   }
 
@@ -57,6 +82,74 @@ export function ProductForm({ defaultValues, onSubmit, submitLabel = "Save" }) {
         />
         {errors.description && <span className="mt-1 block text-xs text-red-600">{errors.description.message}</span>}
       </label>
+
+      <div>
+        <Button type="button" variant="outline" isLoading={aiLoading} onClick={handleAiAssist}>
+          ✨ Suggest with AI
+        </Button>
+        <p className="mt-1 text-xs text-stone-400">Generates draft suggestions from your name/description — review before applying.</p>
+      </div>
+
+      {aiSuggestions && (
+        <div className="rounded-lg border border-brand-200 bg-brand-50 p-4 text-sm">
+          <p className="font-medium text-stone-900">AI Suggestions</p>
+          <div className="mt-2 space-y-2">
+            {aiSuggestions.suggestedCategory && (
+              <div className="flex items-center justify-between">
+                <span>Category: {aiSuggestions.suggestedCategory.name}</span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setValue("category", aiSuggestions.suggestedCategory._id)}
+                >
+                  Apply
+                </Button>
+              </div>
+            )}
+            {aiSuggestions.suggestedMaterial && (
+              <div className="flex items-center justify-between">
+                <span>Material: {aiSuggestions.suggestedMaterial}</span>
+                <Button type="button" variant="outline" onClick={() => setValue("material", aiSuggestions.suggestedMaterial)}>
+                  Apply
+                </Button>
+              </div>
+            )}
+            {aiSuggestions.suggestedColors?.length > 0 && (
+              <div className="flex items-center justify-between">
+                <span>Colors: {aiSuggestions.suggestedColors.join(", ")}</span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setValue("colors", aiSuggestions.suggestedColors.join(", "))}
+                >
+                  Apply
+                </Button>
+              </div>
+            )}
+            {aiSuggestions.suggestedTags?.length > 0 && (
+              <div className="flex items-center justify-between">
+                <span>Tags: {aiSuggestions.suggestedTags.join(", ")}</span>
+                <Button type="button" variant="outline" onClick={() => setValue("tags", aiSuggestions.suggestedTags.join(", "))}>
+                  Apply
+                </Button>
+              </div>
+            )}
+            {aiSuggestions.suggestedDescription && !getValues("description") && (
+              <div className="flex items-center justify-between gap-3">
+                <span className="line-clamp-2">Description: {aiSuggestions.suggestedDescription}</span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setValue("description", aiSuggestions.suggestedDescription)}
+                >
+                  Apply
+                </Button>
+              </div>
+            )}
+          </div>
+          <p className="mt-3 text-xs text-stone-500">{aiSuggestions.note}</p>
+        </div>
+      )}
 
       <label className="block">
         <span className="mb-1.5 block text-sm font-medium text-stone-700">Category</span>

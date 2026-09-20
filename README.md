@@ -42,7 +42,16 @@ development roadmap, and dependency list.
       accept/reject/request-changes -> 10-stage production timeline, with
       the request locked to whichever verified artisan responds first and
       stage transitions enforced by a guard (no skipping ahead)
-- [ ] Phase 10 — AI (recommendations, sizing, listing assistant)
+- [x] **Phase 10** — AI: content-based "Recommended For You" (built from real
+      purchase history, category/material/color/price/artisan affinity, with
+      a popular-products fallback for new customers), wishlist-based
+      recommendations, smart size estimator (real formula + fit/width
+      adjustment + closest-available-size matching, with the required
+      disclaimer), and an artisan listing assistant (heuristic category/
+      material/color/tag/description suggestions — never auto-published,
+      always reviewed by the artisan before applying). Also added a minimal
+      real Wishlist module (Module 14), since recommendations needed it and
+      it closed a placeholder gap.
 - [ ] Phase 11 — Reviews & notifications
 - [ ] Phase 13 — Testing & deployment
 

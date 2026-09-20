@@ -21,6 +21,10 @@ import orderRoutes from "./routes/orderRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import customizationRoutes from "./routes/customizationRoutes.js";
 import customOrderRoutes from "./routes/customOrderRoutes.js";
+import wishlistRoutes from "./routes/wishlistRoutes.js";
+import recommendationRoutes from "./routes/recommendationRoutes.js";
+import sizingRoutes from "./routes/sizingRoutes.js";
+import aiRoutes from "./routes/aiRoutes.js";
 
 const app = express();
 
@@ -55,6 +59,10 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/customizations", customizationRoutes);
 app.use("/api/custom-orders", customOrderRoutes);
+app.use("/api/wishlist", wishlistRoutes);
+app.use("/api/recommendations", recommendationRoutes);
+app.use("/api/sizing", sizingRoutes);
+app.use("/api/ai", aiRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
