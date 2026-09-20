@@ -204,7 +204,7 @@ describe("Cart & checkout", () => {
 
     const firstArtisanLogin = await request(app)
       .post("/api/auth/login")
-      .send({ email: "artisan@example.com", password: "password123" });
+      .send({ identifier: "artisan@example.com", password: "password123" });
     const firstArtisanView = await request(app)
       .get(`/api/orders/${orderRes.body.data._id}`)
       .set("Authorization", `Bearer ${firstArtisanLogin.body.data.accessToken}`);

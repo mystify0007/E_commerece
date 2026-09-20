@@ -8,9 +8,16 @@ import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from ".
 import { createNotification } from "./notificationService.js";
 
 export async function registerUser({ name, email, password, role, phone }) {
-  const existing = await User.findOne({ email });
+  // Only add the phone clause when a phone was actually supplied — an
+  // `{ phone: undefined }` condition would otherwise risk matching other
+  // phone-less accounts and rejecting valid signups as duplicates.
+  const duplicateConditions = [{ email }];
+  if (phone) duplicateConditions.push({ phone });
+  const existing = await User.findOne({ $or: duplicateConditions });
   if (existing) {
-    throw ApiError.conflict("An account with this email already exists");
+    throw ApiError.conflict(
+      existing.email === email ? "An account with this email already exists" : "An account with this phone number already exists"
+    );
   }
 
   const passwordHash = await User.hashPassword(password);
@@ -43,10 +50,12 @@ export async function registerUser({ name, email, password, role, phone }) {
   return issueTokens(user);
 }
 
-export async function loginUser({ email, password }) {
-  const user = await User.findOne({ email }).select("+passwordHash");
+export async function loginUser({ identifier, password }) {
+  const user = await User.findOne({ $or: [{ email: identifier.toLowerCase() }, { phone: identifier }] }).select(
+    "+passwordHash"
+  );
   if (!user || !(await user.comparePassword(password))) {
-    throw ApiError.unauthorized("Invalid email or password");
+    throw ApiError.unauthorized("Invalid email/phone or password");
   }
   if (user.status !== "active") {
     throw ApiError.forbidden("This account has been suspended");

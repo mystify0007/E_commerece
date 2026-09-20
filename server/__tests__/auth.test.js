@@ -55,13 +55,13 @@ describe("Auth & Authorization", () => {
 
     const good = await request(app)
       .post("/api/auth/login")
-      .send({ email: "ram@example.com", password: "password123" });
+      .send({ identifier: "ram@example.com", password: "password123" });
     expect(good.status).toBe(200);
     expect(good.body.data.accessToken).toEqual(expect.any(String));
 
     const bad = await request(app)
       .post("/api/auth/login")
-      .send({ email: "ram@example.com", password: "wrongpassword" });
+      .send({ identifier: "ram@example.com", password: "wrongpassword" });
     expect(bad.status).toBe(401);
   });
 
@@ -107,12 +107,12 @@ describe("Auth & Authorization", () => {
 
     const oldLogin = await request(app)
       .post("/api/auth/login")
-      .send({ email: "bina@example.com", password: "oldpassword1" });
+      .send({ identifier: "bina@example.com", password: "oldpassword1" });
     expect(oldLogin.status).toBe(401);
 
     const newLogin = await request(app)
       .post("/api/auth/login")
-      .send({ email: "bina@example.com", password: "newpassword1" });
+      .send({ identifier: "bina@example.com", password: "newpassword1" });
     expect(newLogin.status).toBe(200);
   });
 

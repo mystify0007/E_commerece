@@ -30,7 +30,7 @@ export function Register() {
   return (
     <div className="mx-auto flex min-h-[80vh] max-w-md flex-col justify-center px-4 py-16">
       <h1 className="text-2xl font-semibold text-stone-900">Create your account</h1>
-      <p className="mt-1 text-sm text-stone-500">Join JuttaX as a customer or a footwear artisan.</p>
+      <p className="mt-1 text-sm text-stone-500">Join JuttaX as a customer or a footwear craftsman.</p>
 
       <form className="mt-8 space-y-5" onSubmit={handleSubmit(onSubmit)} noValidate>
         <Input
@@ -43,6 +43,16 @@ export function Register() {
           type="email"
           error={errors.email?.message}
           {...register("email", { required: "Email is required" })}
+        />
+        <Input
+          label="Phone number"
+          type="tel"
+          placeholder="98XXXXXXXX"
+          error={errors.phone?.message}
+          {...register("phone", {
+            required: "Phone number is required",
+            pattern: { value: /^\+?[0-9]{7,15}$/, message: "Enter a valid phone number" },
+          })}
         />
         <Input
           label="Password"

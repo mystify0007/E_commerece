@@ -26,7 +26,9 @@ const userSchema = new Schema(
       enum: ["active", "suspended"],
       default: "active",
     },
-    phone: { type: String, trim: true },
+    // sparse: true so existing/legacy users without a phone don't collide
+    // on the unique index (multiple missing values are allowed).
+    phone: { type: String, trim: true, unique: true, sparse: true },
     avatarUrl: { type: String, default: null },
     isEmailVerified: { type: Boolean, default: false },
     tokenVersion: { type: Number, default: 0 },

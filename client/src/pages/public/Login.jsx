@@ -29,15 +29,14 @@ export function Login() {
   return (
     <div className="mx-auto flex min-h-[80vh] max-w-md flex-col justify-center px-4 py-16">
       <h1 className="text-2xl font-semibold text-stone-900">Log in to JuttaX</h1>
-      <p className="mt-1 text-sm text-stone-500">Discover handmade footwear from local artisans.</p>
+      <p className="mt-1 text-sm text-stone-500">Discover handmade footwear from local craftsmen.</p>
 
       <form className="mt-8 space-y-5" onSubmit={handleSubmit(onSubmit)} noValidate>
         <Input
-          label="Email"
-          type="email"
-          autoComplete="email"
-          error={errors.email?.message}
-          {...register("email", { required: "Email is required" })}
+          label="Email or phone number"
+          autoComplete="username"
+          error={errors.identifier?.message}
+          {...register("identifier", { required: "Email or phone number is required" })}
         />
         <Input
           label="Password"
