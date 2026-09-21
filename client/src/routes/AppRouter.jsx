@@ -1,4 +1,5 @@
-import { Routes, Route } from "react-router-dom";
+import { useRef } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { PublicLayout } from "../layouts/PublicLayout.jsx";
 import { ArtisanLayout } from "../layouts/ArtisanLayout.jsx";
 import { AdminLayout } from "../layouts/AdminLayout.jsx";
@@ -33,7 +34,24 @@ import { AdminArtisans } from "../pages/admin/Artisans.jsx";
 import { AdminProducts } from "../pages/admin/Products.jsx";
 import { AdminCategories } from "../pages/admin/Categories.jsx";
 
+// A browser reopening a tab that was previously sitting on /admin or
+// /artisan (e.g. "continue where you left off" tab restore) would otherwise
+// drop a still-logged-in admin/craftsman straight back into that panel. Send
+// that first page load to the home page instead; in-app navigation to those
+// panels (clicking the nav link) is unaffected since this only fires once,
+// on the very first render of the whole app.
+const GATED_PREFIXES = ["/admin", "/artisan"];
+
 export function AppRouter() {
+  const initialLoadOnGatedRoute = useRef(
+    GATED_PREFIXES.some((prefix) => window.location.pathname.startsWith(prefix))
+  );
+
+  if (initialLoadOnGatedRoute.current) {
+    initialLoadOnGatedRoute.current = false;
+    return <Navigate to="/" replace />;
+  }
+
   return (
     <Routes>
       <Route element={<PublicLayout />}>
