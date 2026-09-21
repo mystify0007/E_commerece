@@ -195,14 +195,38 @@ export function ProductForm({ defaultValues, onSubmit, submitLabel = "Save" }) {
 
       <div>
         <span className="mb-1.5 block text-sm font-medium text-stone-700">Images</span>
-        <input type="file" accept="image/png,image/jpeg,image/webp" multiple onChange={handleImageSelect} />
+        <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-stone-300 px-4 py-2.5 text-sm font-medium text-stone-900 hover:bg-stone-50">
+          Choose Files
+          <input
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            multiple
+            onChange={handleImageSelect}
+            className="hidden"
+          />
+        </label>
         {uploading && <p className="mt-1 text-xs text-stone-500">Uploading...</p>}
         {images.length > 0 && (
-          <div className="mt-2 flex gap-2">
-            {images.map((url) => (
-              <img key={url} src={url} alt="" className="h-16 w-16 rounded-lg object-cover" />
+          <div className="mt-3 flex flex-wrap gap-2">
+            {images.map((url, index) => (
+              <div key={`${url}-${index}`} className="relative h-16 w-16">
+                <img src={url} alt="" className="h-16 w-16 rounded-lg object-cover" />
+                <button
+                  type="button"
+                  onClick={() => setImages((prev) => prev.filter((_, i) => i !== index))}
+                  aria-label="Remove photo"
+                  className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-stone-900 text-xs leading-none text-white shadow hover:bg-red-600"
+                >
+                  ×
+                </button>
+              </div>
             ))}
           </div>
+        )}
+        {images.length > 0 && (
+          <p className="mt-1.5 text-xs text-stone-400">
+            {images.length}/6 photos · click × to remove one, or Choose Files to add more
+          </p>
         )}
       </div>
 
